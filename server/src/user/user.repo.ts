@@ -8,4 +8,15 @@ export class UserRepo extends PrismaGenericRepo<User> {
     constructor(private prismaService: PrismaService) {
         super('user', prismaService)
     }
+
+    async getByEmail(email: string) {
+        try {
+            const user = await this.prismaService.user.findUniqueOrThrow({
+                where: { email }
+            })
+            return user
+        } catch (error) {
+            throw error
+        }
+    }
 }

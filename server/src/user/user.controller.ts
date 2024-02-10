@@ -3,11 +3,25 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { handleError } from '@/shared/http-error';
+import { LoginDTO } from './dto/login.dto';
+import { Public } from '@/shared/decorators/public.decorator';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
+  @Public()
+  @Post('login')
+  async login(@Body() loginDto: LoginDTO) {
+    try {
+      const token = await this.userService.login(loginDto);
+      return { token }
+    } catch (error) {
+      throw handleError(error);
+    }
+  }
+
+  @Public()
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     try {

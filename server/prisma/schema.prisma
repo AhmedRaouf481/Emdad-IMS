@@ -16,6 +16,9 @@ model User {
   lname    String
   email    String @unique
   password String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Item {
@@ -28,6 +31,9 @@ model Item {
   size     String
   material String
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   package   Package? @relation(fields: [packageId], references: [id])
   packageId String?
 }
@@ -36,6 +42,9 @@ model Package {
   id   String  @id @default(cuid())
   code String?
   qty  Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   items Item[]
 }

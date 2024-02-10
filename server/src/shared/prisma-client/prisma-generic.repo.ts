@@ -28,7 +28,7 @@ export class PrismaGenericRepo<T> {
     }
   }
 
-  async create(item: Omit<T, 'id'>): Promise<T> {
+  async create(item: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T> {
     try {
       const res = await this.prisma[this.modelName].create({
         data: item as any,

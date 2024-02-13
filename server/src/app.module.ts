@@ -4,9 +4,11 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { APP_GUARD } from '@nestjs/core';
 import { UserGuard } from './user/user.guard';
+import { ItemModule } from './item/item.module';
+import { PackageModule } from './package/package.module';
 
 @Module({
-  imports: [UserModule],
+  imports: [UserModule, ItemModule, PackageModule],
   controllers: [AppController],
   providers: [
     {

@@ -1,10 +1,12 @@
-import { IsEmail, IsNotEmpty, IsString, Matches, MinLength } from "class-validator";
+import { Prisma } from "@prisma/client";
+import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MinLength } from "class-validator";
 
-export class CreateUserDto {
+export class CreateUserDto implements Prisma.UserCreateInput {
 
     @IsNotEmpty()
-    @IsEmail()
-    email: string;
+    @IsString()
+    @MinLength(5)
+    username: string;
 
     @IsNotEmpty()
     @MinLength(8)
@@ -22,4 +24,8 @@ export class CreateUserDto {
     @IsString()
     @MinLength(3)
     lname: string;
+
+    @IsOptional()
+    @IsEmail()
+    email: string;
 }

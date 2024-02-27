@@ -15,7 +15,7 @@ export class UserService {
   async login(loginDto: LoginDTO) {
     try {
       const errInvalidCredentials = 'Invalid username or password';
-      const user = await this.userRepo.getByEmail(loginDto.email);
+      const user = await this.userRepo.getByUsername(loginDto.username);
       if (!user) {
         throw new UnauthorizedException(errInvalidCredentials);
       }

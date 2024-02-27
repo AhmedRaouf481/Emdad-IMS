@@ -1,16 +1,9 @@
 import { CreateItemDto } from "@/item/dto/create-item.dto";
 import { Type } from "class-transformer";
-import { IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, ValidateNested } from "class-validator";
+import { IsNotEmpty, IsObject, ValidateNested } from "class-validator";
+import { CreatePackageOnlyDto } from "./create-package-only.dto";
 
-export class CreatePackageDto {
-    @IsNotEmpty()
-    @IsNumber()
-    qty: number;
-
-    @IsOptional()
-    @IsString()
-    code: string;  // Barcode
-
+export class CreatePackageDto extends CreatePackageOnlyDto {
     @IsNotEmpty()
     @IsObject()
     @ValidateNested()

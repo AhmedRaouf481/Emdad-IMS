@@ -6,9 +6,10 @@ import { APP_GUARD } from '@nestjs/core';
 import { UserGuard } from './user/user.guard';
 import { ItemModule } from './item/item.module';
 import { PackageModule } from './package/package.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
-  imports: [UserModule, ItemModule, PackageModule],
+  imports: [UserModule, ItemModule, PackageModule, ProductModule],
   controllers: [AppController],
   providers: [
     {

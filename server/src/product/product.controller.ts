@@ -1,18 +1,18 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
-import { ItemService } from './item.service';
-import { CreateItemDto } from './dto/create-item.dto';
-import { UpdateItemDto } from './dto/update-item.dto';
 import { handleError } from '@/shared/http-error';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ProductService } from './product.service';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
-@Controller('item')
-export class ItemController {
-  constructor(private readonly itemService: ItemService) { }
+@Controller('product')
+export class ProductController {
+  constructor(private readonly productService: ProductService) { }
 
   @Post()
-  async create(@Body() createItemDto: CreateItemDto) {
+  async create(@Body() createProductDto: CreateProductDto) {
     try {
-      return await this.itemService.create(createItemDto);
+      return await this.productService.create(createProductDto);
     } catch (error) {
       throw handleError(error);
     }
@@ -22,7 +22,7 @@ export class ItemController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     try {
-      return await this.itemService.processImportedFile(file);
+      return await this.productService.processImportedFile(file);
     } catch (error) {
       throw handleError(error);
     }
@@ -31,7 +31,7 @@ export class ItemController {
   @Get()
   async findAll() {
     try {
-      return await this.itemService.findAll();
+      return await this.productService.findAll();
     } catch (error) {
       throw handleError(error);
     }
@@ -41,16 +41,16 @@ export class ItemController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     try {
-      return await this.itemService.findOne(id);
+      return await this.productService.findOne(id);
     } catch (error) {
       throw handleError(error);
     }
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateItemDto: UpdateItemDto) {
+  async update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     try {
-      return await this.itemService.update(id, updateItemDto);
+      return await this.productService.update(id, updateProductDto);
     } catch (error) {
       throw handleError(error);
     }
@@ -59,7 +59,7 @@ export class ItemController {
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {
-      return await this.itemService.remove(id);
+      return await this.productService.remove(id);
     } catch (error) {
       throw handleError(error);
     }

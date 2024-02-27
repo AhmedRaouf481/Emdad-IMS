@@ -11,46 +11,76 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(cuid())
+  id       String  @id @default(cuid())
   fname    String
   lname    String
-  email    String @unique
+  username String  @unique
   password String
+  email    String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+model Product {
+  id          String  @id @default(cuid())
+  code        String
+  name        String
+  price       Int
+  qty         Int
+  pkgCapacity Int
+  photo       String?
+  description String?
+  weight      String?
+  color       String?
+  dimension   String?
+  size        String?
+  material    String?
+  minValue    Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items    Item[]
+  packages Package[]
+
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
+}
+
 model Item {
-  id       String  @id @default(cuid())
-  code     String? //barcode
-  name     String
-  price    Int
-  minValue Int?
-  color    String
-  size     String
-  material String
+  id      String @id @default(cuid())
+  barcode String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   package   Package? @relation(fields: [packageId], references: [id])
   packageId String?
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
 }
 
 model Package {
-  id   String  @id @default(cuid())
-  code String? // Barcode
-  qty  Int
+  id       String @id @default(cuid())
+  barcode  String
+  capacity Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  items Item[]
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+  items     Item[]
 }
 
-enum AttributeEnum {
-  COLOR
-  SIZE
-  MATRIAL
+model Category {
+  id   String @id @default(cuid())
+  name String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product[]
 }

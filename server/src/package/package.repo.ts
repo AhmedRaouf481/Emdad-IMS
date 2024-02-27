@@ -9,26 +9,26 @@ export class PackageRepo extends PrismaGenericRepo<Prisma.PackageCreateInput, Pa
         super('package', prismaService, { items: true })
     }
 
-    async createPkgWithItems(data: any) {
-        const items: Prisma.ItemCreateInput[] = []
-        for (let i = 0; i < data.qty; i++) {
-            items.push(data.item)
-        }
-        try {
-            const pkg = await this.prismaService.package.create({
-                data: {
-                    qty: data.qty,
-                    items: {
-                        createMany: {
-                            data: items
-                        }
-                    },
-                },
-                include: this.includesObj as Prisma.PackageInclude
-            })
-            return pkg
-        } catch (error) {
-            throw error
-        }
-    }
+    // async createPkgWithItems(data: any) {
+    //     const items: Prisma.ItemCreateInput[] = []
+    //     for (let i = 0; i < data.qty; i++) {
+    //         items.push(data.item)
+    //     }
+    //     try {
+    //         const pkg = await this.prismaService.package.create({
+    //             data: {
+    //                 capacity: data.capacity,
+    //                 items: {
+    //                     createMany: {
+    //                         data: items
+    //                     }
+    //                 },
+    //             },
+    //             include: this.includesObj as Prisma.PackageInclude
+    //         })
+    //         return pkg
+    //     } catch (error) {
+    //         throw error
+    //     }
+    // }
 }

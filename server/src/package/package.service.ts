@@ -8,23 +8,23 @@ import { CreatePackageOnlyDto } from './dto/create-package-only.dto';
 export class PackageService {
   constructor(private packageRepo: PackageRepo) { }
 
-  async create(createPackageDto: CreatePackageDto) {
-    try {
-      const pkg = await this.packageRepo.createPkgWithItems(createPackageDto)
-      return pkg
-    } catch (error) {
-      throw error
-    }
-  }
+  // async create(createPackageDto: CreatePackageDto) {
+  //   try {
+  //     const pkg = await this.packageRepo.createPkgWithItems(createPackageDto)
+  //     return pkg
+  //   } catch (error) {
+  //     throw error
+  //   }
+  // }
 
-  async createOnly(createPackageDto: CreatePackageOnlyDto) {
-    try {
-      const pkg = await this.packageRepo.create(createPackageDto)
-      return pkg
-    } catch (error) {
-      throw error
-    }
-  }
+  // async createOnly(createPackageDto: CreatePackageOnlyDto) {
+  //   try {
+  //     const pkg = await this.packageRepo.create(createPackageDto)
+  //     return pkg
+  //   } catch (error) {
+  //     throw error
+  //   }
+  // }
 
   async findAll() {
     try {

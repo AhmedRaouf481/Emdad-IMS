@@ -1,31 +1,13 @@
+import { Prisma } from "@prisma/client";
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
-export class CreateItemDto {
+export class CreateItemDto implements Omit<Prisma.ItemCreateInput, 'product'> {
     @IsNotEmpty()
     @IsString()
-    name: string;
-
-    @IsNotEmpty()
-    @IsNumber()
-    price: number;
+    barcode: string;
 
     @IsNotEmpty()
     @IsString()
-    color: string;
+    productId: string;
 
-    @IsNotEmpty()
-    @IsString()
-    size: string;
-
-    @IsNotEmpty()
-    @IsString()
-    material: string;
-
-    @IsOptional()
-    @IsString()
-    minValue: number;
-
-    @IsOptional()
-    @IsString()
-    code: string;
 }

@@ -9,23 +9,23 @@ import { CreatePackageOnlyDto } from './dto/create-package-only.dto';
 export class PackageController {
   constructor(private readonly packageService: PackageService) { }
 
-  @Post()
-  async create(@Body() createPackageDto: CreatePackageDto) {
-    try {
-      return await this.packageService.create(createPackageDto);
-    } catch (error) {
-      throw handleError(error);
-    }
-  }
+  // @Post()
+  // async create(@Body() createPackageDto: CreatePackageDto) {
+  //   try {
+  //     return await this.packageService.create(createPackageDto);
+  //   } catch (error) {
+  //     throw handleError(error);
+  //   }
+  // }
 
-  @Post('only')
-  async createOnly(@Body() createPackageOnlyDto: CreatePackageOnlyDto) {
-    try {
-      return await this.packageService.createOnly(createPackageOnlyDto);
-    } catch (error) {
-      throw handleError(error);
-    }
-  }
+  // @Post('only')
+  // async createOnly(@Body() createPackageOnlyDto: CreatePackageOnlyDto) {
+  //   try {
+  //     return await this.packageService.createOnly(createPackageOnlyDto);
+  //   } catch (error) {
+  //     throw handleError(error);
+  //   }
+  // }
 
   @Get()
   async findAll() {

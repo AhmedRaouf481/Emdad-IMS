@@ -9,10 +9,10 @@ export class UserRepo extends PrismaGenericRepo<Prisma.UserCreateInput, User> {
         super('user', prismaService)
     }
 
-    async getByEmail(email: string) {
+    async getByUsername(username: string) {
         try {
             const user = await this.prismaService.user.findUniqueOrThrow({
-                where: { email }
+                where: { username }
             })
             return user
         } catch (error) {

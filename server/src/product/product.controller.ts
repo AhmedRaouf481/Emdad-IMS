@@ -56,6 +56,15 @@ export class ProductController {
     }
   }
 
+  @Delete()
+  async removeAll() {
+    try {
+      return await this.productService.removeMany();
+    } catch (error) {
+      throw handleError(error);
+    }
+  }
+
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {

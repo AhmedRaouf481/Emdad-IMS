@@ -53,6 +53,15 @@ export class PackageService {
     }
   }
 
+  async removeAll() {
+    try {
+      const pkg = await this.packageRepo.deleteAll()
+      return pkg
+    } catch (error) {
+      throw error
+    }
+  }
+
   async remove(id: string) {
     try {
       const pkg = await this.packageRepo.delete(id)

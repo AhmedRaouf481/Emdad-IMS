@@ -24,14 +24,14 @@ model User {
 
 model Product {
   id          String  @id @default(cuid())
-  code        String
+  code        String  @unique
   name        String
   price       Int
   qty         Int
   pkgCapacity Int
   photo       String?
   description String?
-  weight      String?
+  weight      Int?
   color       String?
   dimension   String?
   size        String?
@@ -50,21 +50,21 @@ model Product {
 
 model Item {
   id      String @id @default(cuid())
-  barcode String
+  barcode String @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  package   Package? @relation(fields: [packageId], references: [id])
+  package   Package? @relation(fields: [packageId], references: [id], onDelete: Cascade)
   packageId String?
 
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
 }
 
 model Package {
   id       String @id @default(cuid())
-  barcode  String
+  barcode  String @unique
   capacity Int
 
   createdAt DateTime @default(now())

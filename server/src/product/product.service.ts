@@ -33,7 +33,7 @@ export class ProductService {
         const indexOfDesciption = indexOf(rows[1], 'description')
         const indexOfPrice = indexOf(rows[1], 'price')
 
-        const rowsData = rows.slice(2, 100)
+        const rowsData = rows.slice(2)
 
         const handleDesc = (desc: string) => {
             let color = ''
@@ -53,6 +53,10 @@ export class ProductService {
 
         for (let i = 0; i < rowsData.length; i++) {
             const row = rowsData[i];
+
+            if (row[indexOfCode] == null && rowsData[i + 1][indexOfCode] == null) {
+                break;
+            }
             let counter = 0;
 
             // Check if the row should be skipped
@@ -81,7 +85,7 @@ export class ProductService {
                     dimension: nextRow[indexOfDimension],
                     qty: nextRow[indexOfQty],
                     weight: nextRow[indexOfWeight],
-                    capacity: nextRow[indexOfCapacity],
+                    pkgCapacity: nextRow[indexOfCapacity],
                     price: nextRow[indexOfPrice],
                     color
                 });
@@ -99,7 +103,7 @@ export class ProductService {
                 dimension: row[indexOfDimension],
                 qty: row[indexOfQty],
                 weight: row[indexOfWeight],
-                capacity: row[indexOfCapacity],
+                pkgCapacity: row[indexOfCapacity],
                 price: row[indexOfPrice],
                 color
 
@@ -116,17 +120,17 @@ export class ProductService {
 
         const rows = worksheet.getSheetValues();
 
+        // console.log(rows.length);
+        // console.log(rows[144]);
         let objects = this.extractData(rows)
+        // console.log(objects.length);
 
         try {
             // console.log(dataToSave);
-            const data = objects.map(rec => {
-                const { capacity, ...data } = rec;
-                return data
-            })
-            // const savedData = await this.productRepo.createMany(data);
+            const data = objects
+            const savedData = await this.productRepo.createFromExcel(data);
             return {
-                success: true, data: rows.slice(1, 60), objects
+                success: true, data: rows.slice(1, 60), savedData
             };
         } catch (error) {
             throw error
@@ -154,6 +158,15 @@ export class ProductService {
     async update(id: string, updateProductDto: UpdateProductDto) {
         try {
             const product = await this.productRepo.update(id, updateProductDto)
+            return product
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async removeMany() {
+        try {
+            const product = await this.productRepo.deleteMany()
             return product
         } catch (error) {
             throw error

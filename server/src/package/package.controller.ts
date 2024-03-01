@@ -55,6 +55,15 @@ export class PackageController {
     }
   }
 
+  @Delete()
+  async removeAll() {
+    try {
+      return await this.packageService.removeAll();
+    } catch (error) {
+      throw handleError(error);
+    }
+  }
+
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {

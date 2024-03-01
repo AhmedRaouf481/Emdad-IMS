@@ -31,4 +31,16 @@ export class PackageRepo extends PrismaGenericRepo<Prisma.PackageCreateInput, Pa
     //         throw error
     //     }
     // }
+
+    async deleteAll() {
+
+        try {
+            const pkg = await this.prismaService.package.deleteMany({})
+            return pkg
+        } catch (error) {
+            throw error
+        }
+    }
+
+
 }

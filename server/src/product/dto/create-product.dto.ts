@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsIn, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateProductDto implements Prisma.ProductCreateInput {
     @IsNotEmpty()
@@ -51,6 +51,6 @@ export class CreateProductDto implements Prisma.ProductCreateInput {
     size?: string;
 
     @IsOptional()
-    @IsString()
-    weight: string;
+    @IsInt()
+    weight: number;
 }

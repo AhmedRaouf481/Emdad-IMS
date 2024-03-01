@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
 import { handleError } from '@/shared/http-error';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductService } from './product.service';
@@ -29,9 +29,9 @@ export class ProductController {
   }
 
   @Get()
-  async findAll() {
+  async findAll(@Query() query) {
     try {
-      return await this.productService.findAll();
+      return await this.productService.findAll(query);
     } catch (error) {
       throw handleError(error);
     }

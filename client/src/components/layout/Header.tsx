@@ -16,7 +16,7 @@ export default function Header({
 }: HeaderProp) {
     return (
         <>
-            <Stack mt={2} mr={5} direction={"row"} sx={{ justifyContent: "space-between" }}>
+            <Stack mt={2} mr={4} direction={"row"} sx={{ justifyContent: "space-between" }}>
                 <Box>
 
                     <Typography variant="h3">

@@ -1,13 +1,10 @@
 "use client"
 
-import InputField from "@/components/InputField";
-import Header from "@/components/layout/Header";
 import colors from "@/styles/colors";
 import { InfoOutlined } from "@mui/icons-material";
-import { Box, Button, Card, CardContent, CardHeader, CardMedia, Grid, IconButton, Stack, Typography } from "@mui/material";
-import { BiPackage } from "react-icons/bi";
+import { Box, Card, CardContent, CardHeader, CardMedia, Grid, IconButton, Typography } from "@mui/material";
 
-export default function Item() {
+export default function CardView() {
     const data: any[] = [
         {
             name: "Cup",
@@ -31,7 +28,7 @@ export default function Item() {
 
             <Box sx={{ overflowY: "auto", mt: 2, mr: 2 }}>
                 <Grid container spacing={2}>
-                    {data.map((item: any, index: number) => (
+                    {data.map((product: any, index: number) => (
                         <Grid key={index} item lg={3} md={3} sm={6} xs={12} minWidth={350}>
                             <Card
                                 sx={{
@@ -41,8 +38,8 @@ export default function Item() {
                                 }}
                             >
                                 <CardHeader
-                                    title={item.name}
-                                    subheader={<>{"Quantity:" + item.qty}</>}
+                                    title={product.name}
+                                    subheader={<>{"Quantity:" + product.qty}</>}
                                     action={
                                         <IconButton
                                             onClick={() => { }}

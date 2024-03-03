@@ -5,7 +5,7 @@ import { Box, Button, Stack } from "@mui/material";
 import { Formik } from "formik";
 import * as Yup from "yup"
 
-const itemSchema = new Yup.ObjectSchema({
+const productSchema = new Yup.ObjectSchema({
     code: Yup.string().required("Code is required"),
     name: Yup.string().required("Name is required"),
     color: Yup.string().required("Color is required"),
@@ -17,7 +17,7 @@ const itemSchema = new Yup.ObjectSchema({
     minValue: Yup.number(),
 })
 
-const itemIntialValues = {
+const productIntialValues = {
     code: "",
     name: "",
     color: "",
@@ -29,13 +29,13 @@ const itemIntialValues = {
     minValue: undefined,
 
 }
-export default function AddItem() {
+export default function AddProduct() {
     return (
         <>
 
             <Formik
-                initialValues={itemIntialValues}
-                validationSchema={itemSchema}
+                initialValues={productIntialValues}
+                validationSchema={productSchema}
                 onSubmit={(values) => console.log(values)}
             >
                 {({
@@ -46,7 +46,7 @@ export default function AddItem() {
                     handleBlur,
                     handleSubmit,
                 }) => (
-                    <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", width: "100%", alignItems: "center" }}>
+                    <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", width: "100%", alignProducts: "center" }}>
                         <Box sx={{ width: "50vw" }}>
                             <Stack direction={"column"} gap={2}>
                                 <InputField
@@ -64,7 +64,7 @@ export default function AddItem() {
                                     error={errors.code && touched.code ? true : false}
                                 />
                                 <InputField
-                                    title="Item Name*"
+                                    title="Product Name*"
                                     required
                                     name="name"
                                     value={values.name}

@@ -4,13 +4,33 @@ import { Formik } from "formik";
 import * as Yup from "yup"
 import InputField from "@/components/InputField";
 import colors from "@/styles/colors";
+import { useEffect, useState } from "react";
+import api from "@/core/api/api";
+import { redirect } from "next/navigation";
+
+interface LoginData {
+    username: string
+    password: string
+}
 
 const loginSchema = new Yup.ObjectSchema({
-    email: Yup.string().email().required("Email is required"),
+    username: Yup.string().required("Username is required"),
     password: Yup.string().required("Password is required")
 })
 
 export default function Login() {
+    const [data, setData] = useState<LoginData>()
+    useEffect(() => {
+        api.post('/user/login', data)
+            .then((res) => {
+                console.log(res)
+                localStorage.setItem("token", res.data.token)
+                redirect('/dashboard')
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }, [data])
     return (
         <Stack direction="column" gap={2} width={{ lg: "35vw", md: "50vw", sm: "50vw" }} fontFamily={"inherit"}>
             <Box>
@@ -25,12 +45,11 @@ export default function Login() {
             }}>
                 <Formik
                     initialValues={{
-                        email: "",
+                        username: "",
                         password: ""
-
                     }}
                     validationSchema={loginSchema}
-                    onSubmit={(values) => console.log(values)}
+                    onSubmit={(values) => { setData(values); console.log(values) }}
                 >
                     {({
                         values,
@@ -44,17 +63,17 @@ export default function Login() {
                             <Stack direction={"column"} gap={2}>
                                 <InputField
                                     required
-                                    title="Email*"
+                                    title="Username*"
                                     variant="outlined"
-                                    name="email"
-                                    value={values.email}
+                                    name="username"
+                                    value={values.username}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
-                                    placeholder="example@gmail.com"
+                                    placeholder="example"
                                     helperText={
-                                        errors.email && touched.email ? errors.email : ""
+                                        errors.username && touched.username ? errors.username : ""
                                     }
-                                    error={errors.email && touched.email ? true : false}
+                                    error={errors.username && touched.username ? true : false}
                                 />
                                 <InputField
                                     title="Password*"
@@ -64,6 +83,7 @@ export default function Login() {
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     placeholder="Enter your password"
+                                    type="password"
                                     helperText={
                                         errors.password && touched.password ? errors.password : ""
                                     }
@@ -74,7 +94,7 @@ export default function Login() {
                                     fullWidth
                                     variant="contained"
                                     disableElevation
-
+                                    type="submit"
                                 >
                                     Submit
                                 </Button>

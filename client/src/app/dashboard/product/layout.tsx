@@ -26,7 +26,7 @@ export default function ItemLayout({
         <>
             <ThemeProvider theme={theme}>
 
-                <Header title="Item" button={{
+                <Header title="Products" button={{
                     name: "Import", props: {
                         variant: "outlined",
                         color: "secondary",

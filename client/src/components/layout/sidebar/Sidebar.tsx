@@ -17,8 +17,8 @@ const sidebarItems = [
         icon: GoHomeFill,
     },
     {
-        name: "Items",
-        href: "/dashboard/item",
+        name: "Products",
+        href: "/dashboard/product",
         icon: BsFillBoxSeamFill,
     },
     {

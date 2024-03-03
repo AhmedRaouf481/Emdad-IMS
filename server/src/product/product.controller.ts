@@ -4,6 +4,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Public } from '@/shared/decorators/public.decorator';
 
 @Controller('product')
 export class ProductController {
@@ -28,6 +29,7 @@ export class ProductController {
     }
   }
 
+  @Public()
   @Get()
   async findAll(@Query() query) {
     try {

@@ -144,6 +144,30 @@ a {
   font-size: 1.1rem;
 }
 
+
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+  background-color: var(--color-bg);
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: var(--color-sidebar-item);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #6b4ef6;
+  filter: opacity(70%);
+  cursor: pointer;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  transition: 0.3s;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

@@ -1,14 +1,14 @@
 "use client"
-import { Box, Button, Divider, Stack, Typography } from "@mui/material";
+import { Box, Button, Divider, FormHelperText, Stack, Typography } from "@mui/material";
 import { Formik } from "formik";
 import * as Yup from "yup"
 import InputField from "@/components/InputField";
 import colors from "@/styles/colors";
 import { useEffect, useState } from "react";
 import api from "@/core/api/api";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
-interface LoginData {
+interface ILoginData {
     username: string
     password: string
 }
@@ -19,18 +19,20 @@ const loginSchema = new Yup.ObjectSchema({
 })
 
 export default function Login() {
-    const [data, setData] = useState<LoginData>()
-    useEffect(() => {
-        api.post('/user/login', data)
+    const [error, setError] = useState("")
+    const router = useRouter()
+    const handleFormSubmit = (values: ILoginData) => {
+        api.post('/user/login', values)
             .then((res) => {
                 console.log(res)
                 localStorage.setItem("token", res.data.token)
-                redirect('/dashboard')
+                router.push('/dashboard')
             })
             .catch((err) => {
                 console.log(err)
+                setError(err?.response?.data?.message ?? "Something went wrong")
             })
-    }, [data])
+    }
     return (
         <Stack direction="column" gap={2} width={{ lg: "35vw", md: "50vw", sm: "50vw" }} fontFamily={"inherit"}>
             <Box>
@@ -49,7 +51,7 @@ export default function Login() {
                         password: ""
                     }}
                     validationSchema={loginSchema}
-                    onSubmit={(values) => { setData(values); console.log(values) }}
+                    onSubmit={(values) => { handleFormSubmit(values); console.log(values) }}
                 >
                     {({
                         values,
@@ -99,6 +101,9 @@ export default function Login() {
                                     Submit
                                 </Button>
                             </Stack>
+                            <FormHelperText sx={{ color: "error.main", mt: 1, fontSize: "1rem" }}>
+                                {error}
+                            </FormHelperText>
                         </Box>
                     )}
 

@@ -256,16 +256,16 @@ export const header: HeaderItem[] = [
     searchable: true,
     onClick: () => { },
   },
-  {
-    id: "_count",
-    label: "packages",
-    minWidth: 100,
-    maxWidth: 100,
-    tableCellProps: { align: "center" },
-    sortable: true,
-    filterable: true,
-    searchable: true,
-    onClick: () => { },
-  },
+  // {
+  //   id: "_count",
+  //   label: "packages",
+  //   minWidth: 100,
+  //   maxWidth: 100,
+  //   tableCellProps: { align: "center" },
+  //   sortable: true,
+  //   filterable: true,
+  //   searchable: true,
+  //   onClick: () => { },
+  // },
 
 ];

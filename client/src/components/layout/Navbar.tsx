@@ -5,6 +5,7 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Image from "next/image";
+import Link from "next/link";
 
 
 export default function Navbar() {
@@ -16,16 +17,18 @@ export default function Navbar() {
                 color: colors.black
             }}>
                 <Toolbar>
-                    <Image
-                        width={80}
-                        height={80}
-                        className="sidebar__logo"
-                        src="/logo.png"
-                        alt="logo"
-                    />
-                    <Typography variant="h5" component="div" sx={{ flexGrow: 1, pl: 1, fontWeight: 600 }}>
-                        Emdad
-                    </Typography>
+                    <Link style={{ display: "flex", alignItems: "center" }} href={"/dashboard"}>
+                        <Image
+                            width={80}
+                            height={80}
+                            className="sidebar__logo"
+                            src="/logo.png"
+                            alt="logo"
+                        />
+                        <Typography variant="h5" component="div" sx={{ flexGrow: 1, pl: 1, fontWeight: 600 }}>
+                            Emdad
+                        </Typography>
+                    </Link>
                 </Toolbar>
             </AppBar>
         </Box>

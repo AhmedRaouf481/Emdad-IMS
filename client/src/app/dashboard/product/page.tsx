@@ -7,25 +7,25 @@ import api from "@/core/api/api";
 import { useEffect, useState } from "react";
 
 export default function Product() {
-    const [data, setData] = useState([])
+    // const [data, setData] = useState([])
     const [flag, setFlag] = useState(false)
-    useEffect(() => {
-        api.get('/product').then((res) => {
-            setData(res.data.data)
-            console.log(res)
-        }).catch((err) => {
-            console.log(err)
-        })
-    }, [flag])
-    console.log(data);
+    // useEffect(() => {
+    //     api.get('/product').then((res) => {
+    //         setData(res.data.data)
+    //         console.log(res)
+    //     }).catch((err) => {
+    //         console.log(err)
+    //     })
+    // }, [flag])
+    // console.log(data);
 
     return (
         <><Box mt={1} mr={4}>
-            <Button onClick={() => { setFlag(!flag) }}>
+            {/* <Button onClick={() => { setFlag(!flag) }}>
                 search
-            </Button>
+            </Button> */}
             <TableView
-                data={data}
+                // data={[]}
                 renderItem={header}
                 rowHeight="20px"
                 stickyHeader={true}

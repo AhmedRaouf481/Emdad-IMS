@@ -21,6 +21,7 @@ import CustomTableTollbar from "./CustomTableTollbar";
 import React from "react";
 import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
 import colors from "@/styles/colors";
+import { useGetProductsQuery } from "@/core/redux/slice/api";
 // import { SortedColumn } from ".";
 
 export interface HeaderItem {
@@ -89,7 +90,7 @@ const CustomColumnSort = ({
 // export default CustomColumnSort;
 
 interface Props {
-    data: any[];
+    data?: any[];
     renderItem: HeaderItem[];
     width?: string;
     height?: string;
@@ -104,7 +105,7 @@ interface Props {
 }
 
 export default function TableView({
-    data,
+    // data,
     renderItem,
     width = "100%",
     height = "80vh",
@@ -117,8 +118,15 @@ export default function TableView({
     rowHeight = "1rem",
     initSortedColumn = { id: renderItem[0].id, isAscending: true },
 }: Props) {
-    const [page, setPage] = useState(2);
+
+    const [page, setPage] = useState(0);
+    const [limit, setLimit] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+
+    const { data, isLoading, isError } = useGetProductsQuery({ page: page, limit: limit })
+    console.log(isLoading);
+    console.log(isError);
+
     const handleChangePage = (
         _event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number
@@ -133,12 +141,12 @@ export default function TableView({
         setPage(0);
     };
 
-    const [filterdData, setFilterddData] = useState<any>([
-        ...data,
-        ...data,
-        ...data,
-        ...data,
-    ]);
+    // const [filterdData, setFilterddData] = useState<any>([
+    //     ...data,
+    //     ...data,
+    //     ...data,
+    //     ...data,
+    // ]);
     //* ----------------------- Handle Sorting
     const [sortedColumn, setSortedColumn] =
         useState<SortedColumn>(initSortedColumn);
@@ -196,7 +204,7 @@ export default function TableView({
                                     {...item.tableCellProps}
                                     sx={{
                                         // minWidth: item.minWidth,
-                                        bgcolor: "#ebffed",
+                                        // bgcolor: "#f6f2fa",
                                         maxHeight: "20px",
 
                                     }}
@@ -220,7 +228,7 @@ export default function TableView({
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {filterdData.map((item: any, index: number) => (
+                        {(data?.data ?? []).map((item: any, index: number) => (
                             <TableRow
                                 key={(item as any).id}
                                 onClick={() => onRowClick && onRowClick(item)}
@@ -294,26 +302,22 @@ export default function TableView({
                     </TableBody>
                 </Table>
             </TableContainer>
-            {/* <Box
+            <Box
                 sx={{
                     width: width,
                 }}
             >
                 <TablePagination
                     component="div"
-                    count={filterdData.length}
-                    page={page}
-
-                    labelRowsPerPage={"Rows per page:"}
-                    labelDisplayedRows={({ from, to, count }) => {
-                        return `${from}-${to} from ${count !== -1 ? count : `أكثر من ${to}`}`;
-                    }}
+                    // count={100}
                     onPageChange={handleChangePage}
                     rowsPerPage={rowsPerPage}
-                    rowsPerPageOptions={[5, 10, 25, 100]}
                     onRowsPerPageChange={handleChangeRowsPerPage}
+                    count={data?.pagination.total as number}
+                    page={page}
+                    rowsPerPageOptions={[5, 10, 25, 100]}
                 />
-            </Box> */}
+            </Box>
         </Box >
     );
 }

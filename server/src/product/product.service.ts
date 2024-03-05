@@ -130,7 +130,7 @@ export class ProductService {
             const data = objects
             const savedData = await this.productRepo.createFromExcel(data);
             return {
-                success: true, data: rows.slice(1, 60), savedData
+                savedData
             };
         } catch (error) {
             throw error

@@ -41,38 +41,9 @@ model Product {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  items    Item[]
-  packages Package[]
-
   category   Category? @relation(fields: [categoryId], references: [id])
   categoryId String?
-}
-
-model Item {
-  id      String @id @default(cuid())
-  barcode String @unique
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  package   Package? @relation(fields: [packageId], references: [id], onDelete: Cascade)
-  packageId String?
-
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String
-}
-
-model Package {
-  id       String @id @default(cuid())
-  barcode  String @unique
-  capacity Int
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  product   Product @relation(fields: [productId], references: [id])
-  productId String
-  items     Item[]
+  orders     Order[]
 }
 
 model Category {
@@ -83,4 +54,29 @@ model Category {
   updatedAt DateTime @updatedAt
 
   product Product[]
+}
+
+model Order {
+  id            String @id @default(cuid())
+  serial        Int    @default(autoincrement())
+  PurchasingNum String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
+  client   Client    @relation(fields: [clientId], references: [id])
+  clientId String
+}
+
+model Client {
+  id      String @id @default(cuid())
+  code    String
+  name    String
+  address String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
 }

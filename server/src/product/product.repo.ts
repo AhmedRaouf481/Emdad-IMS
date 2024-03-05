@@ -9,7 +9,7 @@ interface CustomProductWhereInput extends Prisma.ProductWhereInput {
 @Injectable()
 export class ProductRepo extends PrismaGenericRepo<Prisma.ProductCreateInput, Product> {
     constructor(private prismaService: PrismaService) {
-        super('product', prismaService, { packages: { include: { items: true } } })
+        super('product', prismaService)
     }
 
     pagination(params: { limit: number, page: number, total: number }): {
@@ -105,7 +105,6 @@ export class ProductRepo extends PrismaGenericRepo<Prisma.ProductCreateInput, Pr
                 orderBy: [{ createdAt: 'desc' }, { name: "asc" }],
                 take: pagination.limit,
                 skip: pagination.offset,
-                include: { _count: true }
             })
             // await Promise.all(data.map(async (product) => {
             //     product.image = await this.uploadFile_use_cases.mapFile((product.image) as string)
@@ -122,8 +121,9 @@ export class ProductRepo extends PrismaGenericRepo<Prisma.ProductCreateInput, Pr
 
     async createFromExcel(data: Prisma.ProductCreateInput[]) {
         try {
+            const products = []
             data.forEach(async (prod) => {
-                const product = await this.prismaService.product.upsert({
+                let product = await this.prismaService.product.upsert({
                     where: { code: prod.code },
                     create: {
                         ...prod
@@ -134,44 +134,10 @@ export class ProductRepo extends PrismaGenericRepo<Prisma.ProductCreateInput, Pr
                         pkgCapacity: prod.pkgCapacity
                     }
                 })
-                if (prod.qty !== 0) {
-                    const pkgData: { barcode: string, productId: string, capacity: number }[] = []
-                    let numOfPkgs = Math.ceil(prod.qty / prod.pkgCapacity)
-                    for (let i = 0; i < numOfPkgs; i++) {
-                        let barcode = (Math.random() * 10).toString()
-                        pkgData.push({ barcode, productId: product.id, capacity: product.pkgCapacity })
-                    }
-                    await this.prismaService.package.createMany({
-                        data: pkgData
-                    })
-                    let pkgBarcodes = pkgData.map((p) => p.barcode)
-
-                    const pkgs = await this.prismaService.package.findMany({
-                        where: {
-                            barcode: { in: pkgBarcodes }
-                        }
-                    })
-
-                    let itemsPerPkg = prod.pkgCapacity
-                    pkgs.forEach(async (pkg, index) => {
-                        if (index === pkgs.length - 1) {
-                            itemsPerPkg = prod.qty % prod.pkgCapacity === 0 ? itemsPerPkg : prod.qty % prod.pkgCapacity
-                        }
-                        let itemsData = []
-                        for (let i = 0; i < itemsPerPkg; i++) {
-                            let barcode = (Math.random() * 10).toString()
-                            itemsData.push({ barcode, productId: product.id, packageId: pkg.id })
-                        }
-                        await this.prismaService.item.createMany({
-                            data: itemsData
-                        })
-
-                    })
-
-                }
+                products.push(product)
             }
             )
-            return "ok"
+            return products
         } catch (error) {
             throw error
         }

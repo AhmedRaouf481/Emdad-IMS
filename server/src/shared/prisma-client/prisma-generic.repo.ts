@@ -6,7 +6,7 @@ export class PrismaGenericRepo<N, T> {
   constructor(
     private modelName: string,
     private prisma: PrismaService,
-    protected includesObj?: Prisma.PackageInclude | Prisma.ItemInclude | Prisma.ProductInclude
+    protected includesObj?: Prisma.OrderInclude | Prisma.ClientInclude | Prisma.ProductInclude
   ) {
     this.modelName = modelName;
     this.includesObj = includesObj;

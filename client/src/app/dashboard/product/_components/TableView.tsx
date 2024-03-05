@@ -90,7 +90,7 @@ const CustomColumnSort = ({
 // export default CustomColumnSort;
 
 interface Props {
-    data?: any[];
+    data: any[];
     renderItem: HeaderItem[];
     width?: string;
     height?: string;
@@ -102,10 +102,17 @@ interface Props {
     variantBackground?: boolean;
     rowHeight?: string;
     initSortedColumn?: SortedColumn;
+    page: number
+    setPage: React.Dispatch<React.SetStateAction<number>>
+    rowsPerPage: number
+    setRowsPerPage: React.Dispatch<React.SetStateAction<number>>
+    search: string
+    setSearch: React.Dispatch<React.SetStateAction<string>>
+    total: number
 }
 
 export default function TableView({
-    // data,
+    data,
     renderItem,
     width = "100%",
     height = "80vh",
@@ -117,15 +124,17 @@ export default function TableView({
     variantBackground = true,
     rowHeight = "1rem",
     initSortedColumn = { id: renderItem[0].id, isAscending: true },
+    page,
+    setPage,
+    rowsPerPage,
+    setRowsPerPage,
+    total,
+    search,
+    setSearch
 }: Props) {
 
-    const [page, setPage] = useState(0);
-    const [limit, setLimit] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-
-    const { data, isLoading, isError } = useGetProductsQuery({ page: page, limit: limit })
-    console.log(isLoading);
-    console.log(isError);
+    // const [page, setPage] = useState(0);
+    // const [rowsPerPage, setRowsPerPage] = useState(10);
 
     const handleChangePage = (
         _event: React.MouseEvent<HTMLButtonElement> | null,
@@ -141,12 +150,8 @@ export default function TableView({
         setPage(0);
     };
 
-    // const [filterdData, setFilterddData] = useState<any>([
-    //     ...data,
-    //     ...data,
-    //     ...data,
-    //     ...data,
-    // ]);
+
+    // TODO
     //* ----------------------- Handle Sorting
     const [sortedColumn, setSortedColumn] =
         useState<SortedColumn>(initSortedColumn);
@@ -158,7 +163,12 @@ export default function TableView({
     //* ----------------------- Handle Searching
     const [searchValue, setSearchValue] = useState<string>("");
     useEffect(() => {
-        console.log(searchValue);
+        if (searchValue.length >= 2) {
+            setSearch(searchValue)
+        }
+        if (searchValue === "") {
+            setSearch(searchValue)
+        }
     }, [searchValue]);
 
     return (
@@ -183,7 +193,8 @@ export default function TableView({
                 }}
             >
                 <CustomTableTollbar
-
+                    search={searchValue}
+                    setSearch={setSearchValue}
                 />
             </Box>
 
@@ -228,7 +239,7 @@ export default function TableView({
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {(data?.data ?? []).map((item: any, index: number) => (
+                        {(data ?? []).map((item: any, index: number) => (
                             <TableRow
                                 key={(item as any).id}
                                 onClick={() => onRowClick && onRowClick(item)}
@@ -309,11 +320,10 @@ export default function TableView({
             >
                 <TablePagination
                     component="div"
-                    // count={100}
                     onPageChange={handleChangePage}
                     rowsPerPage={rowsPerPage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
-                    count={data?.pagination.total as number}
+                    count={total ?? 0}
                     page={page}
                     rowsPerPageOptions={[5, 10, 25, 100]}
                 />

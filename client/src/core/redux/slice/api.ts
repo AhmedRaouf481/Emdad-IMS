@@ -16,10 +16,10 @@ export const productsAPI = createApi({
         baseUrl: API_BASE_URL,
     }),
     endpoints: (builder) => ({
-        getProducts: builder.query<ListResponse, { page?: number, limit?: number }>({
-            query: ({ page, limit }) => ({
+        getProducts: builder.query<ListResponse, { page?: number, limit?: number, search?: string }>({
+            query: ({ page, limit, search }) => ({
                 url: `product`,
-                params: { page, limit }
+                params: { page, limit, search }
             }),
         }),
     }),

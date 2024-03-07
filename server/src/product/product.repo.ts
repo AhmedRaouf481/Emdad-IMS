@@ -48,8 +48,6 @@ export class ProductRepo extends PrismaGenericRepo<Prisma.ProductCreateInput, Pr
         try {
             let filters = Object.keys(query)
             const search = query.search
-            console.log(search);
-
 
             // where object initialization
             let whereObj: CustomProductWhereInput = search ? {
@@ -82,7 +80,6 @@ export class ProductRepo extends PrismaGenericRepo<Prisma.ProductCreateInput, Pr
                     }
                 }
             })
-            console.log(whereObj);
 
 
             const productsCount = await this.prismaService.product.count({

@@ -8,14 +8,14 @@ import { handleError } from '@/shared/http-error';
 export class OrderController {
   constructor(private readonly orderService: OrderService) { }
 
-  // @Post()
-  // async create(@Body() createOrderDto: CreateOrderDto) {
-  //   try {
-  //     return await this.orderService.create(createOrderDto);
-  //   } catch (error) {
-  //     throw handleError(error);
-  //   }
-  // }
+  @Post()
+  async create(@Body() createOrderDto: CreateOrderDto) {
+    try {
+      return await this.orderService.create(createOrderDto);
+    } catch (error) {
+      throw handleError(error);
+    }
+  }
 
   // @Post('only')
   // async createOnly(@Body() createOrderOnlyDto: CreateOrderOnlyDto) {
@@ -44,15 +44,15 @@ export class OrderController {
     }
   }
 
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    try {
-      return await this.orderService.update(id, updateOrderDto);
-    }
-    catch (error) {
-      throw handleError(error);
-    }
-  }
+  // @Patch(':id')
+  // async update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
+  //   try {
+  //     return await this.orderService.update(id, updateOrderDto);
+  //   }
+  //   catch (error) {
+  //     throw handleError(error);
+  //   }
+  // }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {

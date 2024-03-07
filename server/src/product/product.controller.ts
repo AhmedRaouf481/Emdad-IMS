@@ -31,9 +31,20 @@ export class ProductController {
 
   @Public()
   @Get()
-  async findAll(@Query() query) {
+  async findAllPag(@Query() query) {
     try {
-      return await this.productService.findAll(query);
+      return await this.productService.findAllPag(query);
+    } catch (error) {
+      throw handleError(error);
+    }
+
+  }
+
+  @Public()
+  @Get('all')
+  async findAll() {
+    try {
+      return await this.productService.findAll();
     } catch (error) {
       throw handleError(error);
     }

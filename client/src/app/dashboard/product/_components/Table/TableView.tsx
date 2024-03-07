@@ -165,6 +165,8 @@ export default function TableView({
     useEffect(() => {
         if (searchValue.length >= 2) {
             setSearch(searchValue)
+            setPage(0)
+            setRowsPerPage(0)
         }
         if (searchValue === "") {
             setSearch(searchValue)
@@ -206,7 +208,7 @@ export default function TableView({
                 }}
                 elevation={0}
             >
-                <Table stickyHeader={stickyHeader} aria-label="sticky table" >
+                <Table stickyHeader={stickyHeader} size="small" aria-label="sticky table" >
                     <TableHead>
                         <TableRow>
                             {renderItem.map((item) => (
@@ -258,21 +260,21 @@ export default function TableView({
                                             key={headerItem.id}
                                             {...headerItem.tableCellProps}
                                             sx={{
-                                                minWidth: headerItem.minWidth,
-                                                maxWidth: headerItem.maxWidth,
-                                                height: rowHeight,
+                                                // minWidth: headerItem.minWidth,
+                                                // maxWidth: headerItem.maxWidth,
+                                                // height: rowHeight,
                                             }}
                                         >
-                                            <Box
+                                            {/* <Box
                                                 sx={{
                                                     height: rowHeight,
                                                     display: "flex",
                                                     justifyContent: "center",
                                                     alignItems: "center",
                                                 }}
-                                            >
-                                                {(item as any)["icon"]}
-                                            </Box>
+                                            > */}
+                                            {(item as any)[headerItem.id]}
+                                            {/* </Box> */}
                                         </TableCell>
                                     ) : (
                                         <TableCell

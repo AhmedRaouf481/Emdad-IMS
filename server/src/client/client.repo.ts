@@ -6,7 +6,7 @@ import { Client, Prisma } from "@prisma/client";
 @Injectable()
 export class ClientRepo extends PrismaGenericRepo<Prisma.ClientCreateInput, Client> {
     constructor(private prismaService: PrismaService) {
-        super('client', prismaService, { products: true })
+        super('client', prismaService)
     }
 
 

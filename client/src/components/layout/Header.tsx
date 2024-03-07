@@ -19,7 +19,7 @@ export default function Header({
             <Stack mt={2} mr={4} direction={"row"} sx={{ justifyContent: "space-between" }}>
                 <Box>
 
-                    <Typography variant="h3">
+                    <Typography variant="h3" fontSize={{ lg: '3rem', md: "3rem", sm: "2rem", xs: "2rem" }}>
                         {title}
                     </Typography>
                     <Box

@@ -1,11 +1,11 @@
 "use client"
 
-import { Box, Button } from "@mui/material";
-import TableView from "./_components/TableView";
-import { header } from "./_components/data";
-import api from "@/core/api/api";
-import { useEffect, useState } from "react";
+import { Box } from "@mui/material";
+import TableView from "./_components/Table/TableView";
+import { header } from "./_components/Table/data";
+import { useState } from "react";
 import { useGetProductsQuery } from "@/core/redux/slice/api";
+import BasicButtonGroup from "@/app/dashboard/product/_components/Table/ButtonGroup";
 
 export default function Product() {
     const [page, setPage] = useState(0);
@@ -19,12 +19,18 @@ export default function Product() {
     })
     console.log(isLoading);
     console.log(isError);
+    const tableData = data?.data ? data.data.map((value) => {
+        return {
+            ...value,
+            button: <BasicButtonGroup />
+        }
+    }) : []
 
     return (
         <>
             <Box mt={1} mr={4}>
                 <TableView
-                    data={data?.data ?? []}
+                    data={tableData}
                     renderItem={header}
                     rowHeight="20px"
                     stickyHeader={true}

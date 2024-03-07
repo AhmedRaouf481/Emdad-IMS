@@ -137,9 +137,18 @@ export class ProductService {
         }
     }
 
-    async findAll(query) {
+    async findAllPag(query) {
         try {
             const product = await this.productRepo.getAllPaginated(query)
+            return product
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async findAll() {
+        try {
+            const product = await this.productRepo.getAll()
             return product
         } catch (error) {
             throw error

@@ -3,6 +3,7 @@ import { ClientService } from './client.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { handleError } from '@/shared/http-error';
+import { Public } from '@/shared/decorators/public.decorator';
 
 @Controller('client')
 export class ClientController {
@@ -17,6 +18,7 @@ export class ClientController {
     }
   }
 
+  @Public()
   @Get()
   async findAll() {
     try {

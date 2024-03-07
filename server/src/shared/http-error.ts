@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   InternalServerErrorException,
   NotFoundException,
@@ -14,6 +15,10 @@ export function handleError(error: any) {
     throw new ConflictException(
       `${error.meta.relation_name} relation already exists`,
     );
+
+  if (error.statusCode) {
+    throw new BadRequestException(error.msg)
+  }
 
   if (error.status && error.status != 500) throw error;
   console.log(error);

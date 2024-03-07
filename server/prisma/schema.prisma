@@ -59,7 +59,8 @@ model Category {
 model Order {
   id            String @id @default(cuid())
   serial        Int    @default(autoincrement())
-  PurchasingNum String
+  purchasingNum String
+  qty           Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

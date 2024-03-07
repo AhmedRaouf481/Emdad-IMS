@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { OrderRepo } from './order.repo';
@@ -7,19 +7,22 @@ import { OrderRepo } from './order.repo';
 export class OrderService {
   constructor(private orderRepo: OrderRepo) { }
 
-  // async create(createOrderDto: CreateOrderDto) {
-  //   try {
-  //     const pkg = await this.orderRepo.createPkgWithItems(createOrderDto)
-  //     return pkg
-  //   } catch (error) {
-  //     throw error
-  //   }
-  // }
+  async create(createOrderDto: CreateOrderDto) {
+    try {
+      if (!createOrderDto.client && !createOrderDto.clientId) {
+        throw new BadRequestException("No client specified")
+      }
+      const order = await this.orderRepo.create_order(createOrderDto)
+      return order
+    } catch (error) {
+      throw error
+    }
+  }
 
   // async createOnly(createOrderDto: CreateOrderOnlyDto) {
   //   try {
-  //     const pkg = await this.orderRepo.create(createOrderDto)
-  //     return pkg
+  //     const order = await this.orderRepo.create(createOrderDto)
+  //     return order
   //   } catch (error) {
   //     throw error
   //   }
@@ -27,8 +30,8 @@ export class OrderService {
 
   async findAll() {
     try {
-      const pkg = await this.orderRepo.getAll()
-      return pkg
+      const order = await this.orderRepo.getAll()
+      return order
     } catch (error) {
       throw error
     }
@@ -36,26 +39,26 @@ export class OrderService {
 
   async findOne(id: string) {
     try {
-      const pkg = await this.orderRepo.getByID(id)
-      return pkg
+      const order = await this.orderRepo.getByID(id)
+      return order
     } catch (error) {
       throw error
     }
   }
 
-  async update(id: string, updateOrderDto: UpdateOrderDto) {
-    try {
-      const pkg = await this.orderRepo.update(id, updateOrderDto)
-      return pkg
-    } catch (error) {
-      throw error
-    }
-  }
+  // async update(id: string, updateOrderDto: UpdateOrderDto) {
+  //   try {
+  //     const order = await this.orderRepo.update(id, updateOrderDto)
+  //     return order
+  //   } catch (error) {
+  //     throw error
+  //   }
+  // }
 
   async remove(id: string) {
     try {
-      const pkg = await this.orderRepo.delete(id)
-      return pkg
+      const order = await this.orderRepo.delete(id)
+      return order
     } catch (error) {
       throw error
     }

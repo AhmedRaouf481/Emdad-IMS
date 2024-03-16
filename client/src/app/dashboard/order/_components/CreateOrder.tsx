@@ -1,10 +1,10 @@
 "use client"
 
 import { Box, Button, FormHelperText, Stack, TextField } from "@mui/material";
-import { Formik } from "formik";
+import { Formik, useFormikContext } from "formik";
 import InputField from "@/components/InputField";
 import * as Yup from "yup"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/core/api/api";
 import colors from "@/styles/colors";
@@ -18,6 +18,8 @@ import CustomizedDialog from "@/components/CustomizedDialog";
 interface IOrderData {
     purchasingNum: string
     qty: string
+    client?: { label: string, id: string }
+    products: any[]
 }
 
 const orderSchema = new Yup.ObjectSchema({
@@ -27,20 +29,51 @@ const orderSchema = new Yup.ObjectSchema({
     products: Yup.array().required("Products is required")
 })
 
-export default function CreateOrder() {
+const UpdateData = ({ data = null }: { data: any }) => {
+    const { setFieldValue } = useFormikContext()
+    useEffect(() => {
+        console.log("555555555");
+        setFieldValue("products", data)
+    }, [data])
+    return null
+}
+
+export default function CreateOrder({ setFieldValue, formRef, data }: { setFieldValue?: any, formRef?: React.MutableRefObject<any>, data?: any }) {
     const [error, setError] = useState("")
     const router = useRouter()
 
-    const [open, setOpen] = useState(false);
+
+    const [clientOpen, setClientOpen] = useState(false);
     const productData = useGetAllProductsQuery({}).data
     let clientData = useGetAllClientsQuery({}).data
+    const [clients, setClients] = useState<any>(clientData)
 
-    const handleFormSubmit = (values: IOrderData) => {
-        api.post('/user/login', values)
+    useEffect(() => {
+        api.get('/client')
             .then((res) => {
                 console.log(res)
-                localStorage.setItem("token", res.data.token)
-                router.push('/dashboard')
+                setClients(res.data)
+            })
+            .catch((err) => {
+                console.log(err)
+            });
+    }, [clientOpen])
+
+
+
+
+    const handleFormSubmit = (values: IOrderData) => {
+        const { client, products, ...restValues } = values
+        const data = {
+            ...restValues,
+            clientId: client?.id,
+            productsIds: products.map(product => product.id),
+        }
+        api.post('/order', data)
+            .then((res) => {
+                console.log(res)
+                setError("")
+
             })
             .catch((err) => {
                 console.log(err)
@@ -48,7 +81,9 @@ export default function CreateOrder() {
             })
     }
 
-    clientData = clientData?.map((v) => ({ label: v.name, id: v.code }))
+
+    // console.log(data);
+    console.log(productData);
 
 
     return (
@@ -63,11 +98,12 @@ export default function CreateOrder() {
                     initialValues={{
                         purchasingNum: "",
                         qty: "",
-                        client: "",
-                        products: []
+                        client: undefined,
+                        products: [productData?.find((product: any) => product.code === data.code)]
                     }}
                     validationSchema={orderSchema}
-                    onSubmit={(values) => { console.log(values) }}
+                    onSubmit={(values) => { console.log(values); return handleFormSubmit(values) }}
+                    innerRef={formRef}
                 >
                     {({
                         values,
@@ -76,101 +112,104 @@ export default function CreateOrder() {
                         handleChange,
                         handleBlur,
                         handleSubmit,
-                    }) => (
-                        <Box component="form" onSubmit={handleSubmit}>
-                            <Stack direction={"column"} gap={2}>
-                                <InputField
-                                    required
-                                    title="Purchasing Number*"
-                                    variant="outlined"
-                                    name="purchasingNum"
-                                    value={values.purchasingNum}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    placeholder="Enter purchasing number"
-                                    helperText={
-                                        errors.purchasingNum && touched.purchasingNum ? errors.purchasingNum : ""
-                                    }
-                                    error={errors.purchasingNum && touched.purchasingNum ? true : false}
-                                />
-                                <InputField
-                                    title="Quantity*"
-                                    required
-                                    name="qty"
-                                    value={values.qty}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    placeholder="Enter order quantity"
-                                    type="number"
-                                    helperText={
-                                        errors.qty && touched.qty ? errors.qty : ""
-                                    }
-                                    error={errors.qty && touched.qty ? true : false}
-                                />
+                    }) => {
+                        return (
 
-                                <SelectField
-                                    multiple
-                                    limitTags={2}
-                                    id="multiple-limit-tags"
-                                    title="Product"
-                                    options={productData ?? []}
-                                    disableCloseOnSelect
-                                    getOptionLabel={(option) => option.code}
-                                    renderInput={(params) => (
-                                        <TextField {...params} name="products" placeholder="Product" />
-                                    )}
-                                    value={values.products}
-                                    onChange={(e, value) => {
-                                        const event = { ...e, target: { ...e.target, name: "products", value: value } };
-                                        handleChange(event);
-                                    }}
-                                />
-                                <Stack direction={{ md: "row", sm: "column" }} gap={1} width={"100%"} alignItems={"end"}>
+                            <Box component="form" onSubmit={handleSubmit}>
+                                <Stack direction={"column"} gap={2}>
+                                    <InputField
+                                        required
+                                        title="Purchasing Number*"
+                                        variant="outlined"
+                                        name="purchasingNum"
+                                        value={values.purchasingNum}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        placeholder="Enter purchasing number"
+                                        helperText={
+                                            errors.purchasingNum && touched.purchasingNum ? errors.purchasingNum : ""
+                                        }
+                                        error={errors.purchasingNum && touched.purchasingNum ? true : false}
+                                    />
+                                    <InputField
+                                        title="Quantity*"
+                                        required
+                                        name="qty"
+                                        value={values.qty}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        placeholder="Enter order quantity"
+                                        type="number"
+                                        helperText={
+                                            errors.qty && touched.qty ? errors.qty : ""
+                                        }
+                                        error={errors.qty && touched.qty ? true : false}
+                                    />
 
                                     <SelectField
-                                        id="select-client"
-                                        title="Client"
-                                        options={clientData ?? []}
+                                        multiple
+                                        limitTags={2}
+                                        id="multiple-limit-tags"
+                                        title="Product"
+                                        options={productData ?? []}
+                                        disableCloseOnSelect
+                                        getOptionLabel={(option) => option?.code}
                                         renderInput={(params) => (
-                                            <TextField {...params} name="client" />
+                                            <TextField {...params} name="products" placeholder="Product" />
                                         )}
-                                        value={values.client}
+                                        value={values.products}
                                         onChange={(e, value) => {
-                                            const event = { ...e, target: { ...e.target, name: "client", value: value } };
+                                            const event = { ...e, target: { ...e.target, name: "products", value: value } };
                                             handleChange(event);
                                         }}
                                     />
+                                    <Stack direction={{ md: "row", sm: "column" }} gap={1} width={"100%"} alignItems={"end"}>
+
+                                        <SelectField
+                                            id="select-client"
+                                            title="Client"
+                                            options={clients?.map((v: any) => ({ label: v.name, id: v.id })) ?? []}
+                                            renderInput={(params) => (
+                                                <TextField {...params} name="client" />
+                                            )}
+                                            value={values.client}
+                                            onChange={(e, value) => {
+                                                const event = { ...e, target: { ...e.target, name: "client", value: value } };
+                                                handleChange(event);
+                                            }}
+                                        />
+                                        <Button
+                                            color="secondary"
+                                            variant="outlined"
+                                            disableElevation
+                                            sx={{ width: { md: "30%", sm: "100%", xs: "100%" }, height: "2.5rem" }}
+                                            onClick={() => { setClientOpen(true) }}
+                                        >
+                                            Add client
+                                        </Button>
+                                    </Stack>
                                     <Button
                                         color="secondary"
-                                        variant="outlined"
+                                        fullWidth
+                                        variant="contained"
                                         disableElevation
-                                        sx={{ width: { md: "30%", sm: "100%", xs: "100%" }, height: "2.5rem" }}
-                                        onClick={() => { setOpen(true) }}
+                                        type="submit"
                                     >
-                                        Add client
+                                        Submit
                                     </Button>
                                 </Stack>
-                                <Button
-                                    color="secondary"
-                                    fullWidth
-                                    variant="contained"
-                                    disableElevation
-                                    type="submit"
-                                >
-                                    Submit
-                                </Button>
-                            </Stack>
-                            <FormHelperText sx={{ color: "error.main", mt: 1, fontSize: "1rem" }}>
-                                {error}
-                            </FormHelperText>
+                                <FormHelperText sx={{ color: "error.main", mt: 1, fontSize: "1rem" }}>
+                                    {error}
+                                </FormHelperText>
 
-                        </Box>
-                    )}
+                            </Box>
+                        )
+                    }}
 
                 </Formik>
-            </Box>
-            <CustomizedDialog open={open} setOpen={setOpen}>
-                <CreateClient />
+            </Box >
+            <CustomizedDialog open={clientOpen} setOpen={setClientOpen}>
+                <CreateClient setOpen={setClientOpen} />
             </CustomizedDialog>
         </>
     );

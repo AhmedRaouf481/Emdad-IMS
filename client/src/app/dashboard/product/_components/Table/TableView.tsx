@@ -108,6 +108,8 @@ interface Props {
     setRowsPerPage: React.Dispatch<React.SetStateAction<number>>
     search: string
     setSearch: React.Dispatch<React.SetStateAction<string>>
+    categoryFilter: {}
+    setCategoryFilter: React.Dispatch<React.SetStateAction<{}>>
     total: number
 }
 
@@ -130,11 +132,13 @@ export default function TableView({
     setRowsPerPage,
     total,
     search,
-    setSearch
+    setSearch,
+    categoryFilter,
+    setCategoryFilter
 }: Props) {
 
     // const [page, setPage] = useState(0);
-    // const [rowsPerPage, setRowsPerPage] = useState(10);
+
 
     const handleChangePage = (
         _event: React.MouseEvent<HTMLButtonElement> | null,
@@ -180,26 +184,20 @@ export default function TableView({
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
+                mt: 2,
                 width: width,
                 height: height,
                 ...sx,
             }}
         >
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "end",
-                    mb: 2,
-                    width: width,
-                }}
-            >
-                <CustomTableTollbar
-                    search={searchValue}
-                    setSearch={setSearchValue}
-                />
-            </Box>
 
+            <CustomTableTollbar
+                search={searchValue}
+                setSearch={setSearchValue}
+                categoryFilter={categoryFilter}
+                setCategoryFilter={setCategoryFilter}
+                width={width}
+            />
             <TableContainer
                 component={Paper}
                 sx={{

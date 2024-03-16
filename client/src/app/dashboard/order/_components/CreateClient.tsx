@@ -20,17 +20,17 @@ const clientSchema = new Yup.ObjectSchema({
     address: Yup.string().required("Address is required"),
 })
 
-export default function CreateClient() {
+export default function CreateClient(props: {
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
+}) {
     const [error, setError] = useState("")
-    const router = useRouter()
 
 
     const handleFormSubmit = (values: IClientData) => {
-        api.post('/user/login', values)
+        api.post('/client', values)
             .then((res) => {
                 console.log(res)
-                localStorage.setItem("token", res.data.token)
-                router.push('/dashboard')
+                props.setOpen(false)
             })
             .catch((err) => {
                 console.log(err)
@@ -54,7 +54,7 @@ export default function CreateClient() {
                         address: "",
                     }}
                     validationSchema={clientSchema}
-                    onSubmit={(values) => { console.log(values) }}
+                    onSubmit={(values) => { console.log(values); return handleFormSubmit(values) }}
                 >
                     {({
                         values,

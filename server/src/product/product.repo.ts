@@ -74,9 +74,18 @@ export class ProductRepo extends PrismaGenericRepo<Prisma.ProductCreateInput, Pr
             filters.map((filter: any) => {
                 if (this.accepted_filters.includes(filter)) {
                     q = query[filter].split(',')
-                    whereObj[filter] = {
-                        in: q,
-                        mode: 'insensitive'
+                    if (filter === 'category') {
+                        whereObj[filter] = {
+                            name: {
+                                in: q,
+                                mode: 'insensitive'
+                            }
+                        }
+                    } else {
+                        whereObj[filter] = {
+                            in: q,
+                            mode: 'insensitive'
+                        }
                     }
                 }
             })
@@ -102,6 +111,7 @@ export class ProductRepo extends PrismaGenericRepo<Prisma.ProductCreateInput, Pr
                 orderBy: [{ createdAt: 'desc' }, { name: "asc" }],
                 take: pagination.limit,
                 skip: pagination.offset,
+                include: { category: true }
             })
             // await Promise.all(data.map(async (product) => {
             //     product.image = await this.uploadFile_use_cases.mapFile((product.image) as string)
@@ -116,25 +126,47 @@ export class ProductRepo extends PrismaGenericRepo<Prisma.ProductCreateInput, Pr
         }
     }
 
-    async createFromExcel(data: Prisma.ProductCreateInput[]) {
+    async createFromExcel(data: Record<string, any[]>) {
         try {
             const products = []
-            data.forEach(async (prod) => {
-                let product = await this.prismaService.product.upsert({
-                    where: { code: prod.code },
-                    create: {
-                        ...prod
-                    },
-                    update: {
-                        qty: { increment: prod.qty },
-                        price: prod.price,
-                        pkgCapacity: prod.pkgCapacity
+            Object.keys(data).forEach(async key => {
+                let category = await this.prismaService.category.create({
+                    data: {
+                        name: key,
                     }
                 })
-                products.push(product)
-            }
-            )
+                data[key].forEach(async (prod) => {
+                    let product = await this.prismaService.product.upsert({
+                        where: { code: prod.code },
+                        create: {
+                            ...prod,
+                            category: {
+                                connect: {
+                                    id: category.id
+                                }
+                            }
+                        },
+                        update: {
+                            qty: { increment: prod.qty },
+                            price: prod.price,
+                            pkgCapacity: prod.pkgCapacity
+                        }
+                    })
+                    products.push(product)
+                }
+                )
+            })
             return products
+        } catch (error) {
+            throw error
+        }
+    }
+
+
+    async getCategories() {
+        try {
+            const categories = await this.prismaService.category.findMany()
+            return categories
         } catch (error) {
             throw error
         }
@@ -174,5 +206,6 @@ export class ProductRepo extends PrismaGenericRepo<Prisma.ProductCreateInput, Pr
         'code',
         'material',
         'minValue',
+        'category',
     ]
 }

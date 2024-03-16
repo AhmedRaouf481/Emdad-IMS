@@ -51,6 +51,17 @@ export class ProductController {
 
   }
 
+  @Public()
+  @Get('category')
+  async findAllCategories() {
+    try {
+      return await this.productService.getAllCategories();
+    } catch (error) {
+      throw handleError(error);
+    }
+
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     try {

@@ -21,6 +21,7 @@ export class ProductService {
     extractData(rows) {
         let objects = []
         let skipNextRow = false
+        let category: Record<string, any[]> = {}
         let name = ''
 
         const indexOf = (arr, q) => arr.findIndex(product => product?.toLowerCase().includes(q?.toLowerCase()));
@@ -55,15 +56,16 @@ export class ProductService {
             const row = rowsData[i];
 
             if (row[indexOfCode] == null && rowsData[i + 1][indexOfCode] == null) {
+                category
                 break;
             }
             let counter = 0;
 
             // Check if the row should be skipped
-            if (skipNextRow) {
-                skipNextRow = false;
-                continue;
-            }
+            // if (skipNextRow) {
+            //     skipNextRow = false;
+            //     continue;
+            // }
 
             // Check if the row is the Name row
             (row as string[]).forEach(cell => {
@@ -73,30 +75,31 @@ export class ProductService {
             })
 
             if (counter === 1) {
+
                 name = row[2]
+                category[name] = []
+                // // Extract other data from the next row
+                // const nextRow = rowsData[i + 1];
+                // const { color, description } = handleDesc(nextRow[indexOfDesciption])
+                // category[name].push({
+                //     name,
+                //     code: nextRow[indexOfCode],
+                //     description,
+                //     dimension: nextRow[indexOfDimension],
+                //     qty: nextRow[indexOfQty],
+                //     weight: nextRow[indexOfWeight],
+                //     pkgCapacity: nextRow[indexOfCapacity],
+                //     price: nextRow[indexOfPrice],
+                //     color
+                // });
 
-                // Extract other data from the next row
-                const nextRow = rowsData[i + 1];
-                const { color, description } = handleDesc(nextRow[indexOfDesciption])
-                objects.push({
-                    name,
-                    code: nextRow[indexOfCode],
-                    description,
-                    dimension: nextRow[indexOfDimension],
-                    qty: nextRow[indexOfQty],
-                    weight: nextRow[indexOfWeight],
-                    pkgCapacity: nextRow[indexOfCapacity],
-                    price: nextRow[indexOfPrice],
-                    color
-                });
-
-                // Skip the next row in the iteration
-                skipNextRow = true;
+                // // Skip the next row in the iteration
+                // skipNextRow = true;
                 continue
             }
             const { color, description } = handleDesc(row[indexOfDesciption])
 
-            objects.push({
+            category[name].push({
                 name,
                 code: row[indexOfCode],
                 description,
@@ -110,7 +113,7 @@ export class ProductService {
             });
 
         }
-        return objects
+        return category
     }
 
     async processImportedFile(file: Express.Multer.File) {
@@ -150,6 +153,15 @@ export class ProductService {
         try {
             const product = await this.productRepo.getAll()
             return product
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getAllCategories() {
+        try {
+            const categories = await this.productRepo.getCategories()
+            return categories
         } catch (error) {
             throw error
         }

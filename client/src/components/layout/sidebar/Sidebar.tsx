@@ -1,14 +1,14 @@
 "use client"
 import Image from "next/image";
-import { MdPeopleAlt } from "react-icons/md";
 import Link from "next/link";
 import { useContext } from "react";
 import { usePathname } from "next/navigation";
-import { KeyboardDoubleArrowLeft, KeyboardDoubleArrowRight } from "@mui/icons-material";
+import { KeyboardDoubleArrowLeft, KeyboardDoubleArrowRight, Logout } from "@mui/icons-material";
 import { SidebarContext } from "./SidebarContext";
 import { GoHomeFill } from "react-icons/go";
-import { TbTruckDelivery } from "react-icons/tb";
+import { TbTruckDelivery, TbLogout2 } from "react-icons/tb";
 import { BsFillBoxSeamFill } from "react-icons/bs";
+import { TbReportAnalytics } from "react-icons/tb";
 
 const sidebarItems = [
     {
@@ -25,6 +25,11 @@ const sidebarItems = [
         name: "Orders",
         href: "/dashboard/order",
         icon: TbTruckDelivery,
+    },
+    {
+        name: "Reports",
+        href: "/dashboard/",
+        icon: TbReportAnalytics,
     },
 ];
 
@@ -76,7 +81,10 @@ const Sidebar = () => {
                             href={"/login"}
                         >
 
-                            <span className="sidebar__name">Login</span>
+                            <span className={`sidebar__icon`}>
+                                <TbLogout2 size="1.4rem" style={{ display: "flex", alignItems: "center", justifyContent: "center" }} />
+                            </span>
+                            <span className="sidebar__name">Logout</span>
                         </Link>
                     </div>
                 </div>

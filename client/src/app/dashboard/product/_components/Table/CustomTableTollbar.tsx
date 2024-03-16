@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
@@ -7,14 +6,70 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import DirectionsIcon from '@mui/icons-material/Directions';
 import colors from '@/styles/colors';
+import { Autocomplete, AutocompleteRenderInputParams, Box, TextField } from '@mui/material';
+import SelectField from '@/components/SelectField';
+import api from '@/core/api/api';
+import { useEffect, useState } from 'react';
 
-export default function CustomTableTollbar({ search = "", setSearch }: { search: string, setSearch: any }) {
+interface CustomTableTollbarProps {
+    search: string
+    width: string
+    setSearch: any
+    categoryFilter: {}
+    setCategoryFilter: any
+}
+export default function CustomTableTollbar({ search = "",
+    setSearch,
+    width,
+    categoryFilter,
+    setCategoryFilter }: CustomTableTollbarProps) {
+    const [categories, setCategories] = useState([])
+    useEffect(() => {
+        api.get('/product/category')
+            .then((res) => setCategories(res.data))
+            .catch((err) => { console.log(err) })
+
+    }, [])
+    console.log(categoryFilter);
+
     return (
-        <>
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "row-reverse",
+                alignItems: "center",
+                justifyContent: "end",
+                gap: 2,
+                mb: 2,
+                width: width,
+            }}
+        >
+            <Autocomplete
+                size='small'
+
+                sx={{
+                    width: {
+                        lg: "20%", md: "40%", xs: "100%"
+                    },
+
+                }}
+                renderInput={(params) => (
+                    <TextField {...params} name="products" placeholder="Product" variant='standard' />
+                )}
+                options={
+                    categories.map((value: { name: string, id: string }) => ({
+                        label: value.name.toLowerCase(),
+                        id: value.id
+                    })) ?? []
+                }
+                value={categoryFilter}
+                onChange={(e, value) => {
+                    setCategoryFilter(value);
+                }} />
             <Paper
                 component="div"
                 sx={{
-                    p: '2px 4px',
+                    mb: 2,
                     display: 'flex',
                     alignItems: 'center',
                     width: {
@@ -38,6 +93,6 @@ export default function CustomTableTollbar({ search = "", setSearch }: { search:
                 </IconButton>
 
             </Paper>
-        </>
+        </Box>
     );
 }

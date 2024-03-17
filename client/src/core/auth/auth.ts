@@ -1,7 +1,6 @@
-import type { NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { API_BASE_URL } from "./api/api";
-import NextAuth from "next-auth";
+import { API_BASE_URL } from "../api/api";
+import NextAuth, { NextAuthOptions } from "next-auth";
 
 const credentialsProvider = CredentialsProvider({
     name: "credentials",
@@ -23,7 +22,6 @@ const credentialsProvider = CredentialsProvider({
                 "Content-Type": "application/json",
             },
         });
-        console.log(res);
 
         if (res.status == 401) {
             console.log(res.statusText);
@@ -31,27 +29,18 @@ const credentialsProvider = CredentialsProvider({
             return null;
         }
         const user = await res.json();
-        console.log(user);
 
         return user;
     },
 
 })
 
-const config = {
+const config: NextAuthOptions = {
     providers: [credentialsProvider],
     pages: {
         signIn: "/login"
     },
     callbacks: {
-        authorized({ request, auth }) {
-            const { pathname } = request.nextUrl
-            console.log(pathname);
-            console.log(auth);
-
-            if (pathname.includes("/dashboard")) return !!auth
-            return true
-        },
         async jwt({ token, user }) {
             // Persist the OAuth access_token to the token right after signin
             if (user) {
@@ -65,6 +54,6 @@ const config = {
             return session
         }
     }
-} satisfies NextAuthConfig
+}
 
-export const { handlers, auth, signIn, signOut } = NextAuth(config)
+export const handler = NextAuth(config)

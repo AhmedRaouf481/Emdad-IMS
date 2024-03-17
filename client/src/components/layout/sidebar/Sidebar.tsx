@@ -10,6 +10,7 @@ import { TbTruckDelivery, TbLogout2 } from "react-icons/tb";
 import { BsFillBoxSeamFill } from "react-icons/bs";
 import { TbReportAnalytics } from "react-icons/tb";
 import { signOut } from "next-auth/react";
+import { Button } from "@mui/material";
 
 const sidebarItems = [
     {
@@ -77,16 +78,22 @@ const Sidebar = () => {
                     <div>
 
                         <hr />
-                        <Link
+                        <Button
+                            size="small"
                             className="sidebar__link"
-                            href={"/api/auth/signout"}
+                            sx={{
+                                padding: "0.8rem 1rem !important",
+                                margin: "0 0 0.5rem 0 !important",
+                                fontSize: "0.9rem !important"
+                            }}
+                            onClick={() => signOut()}
                         >
 
                             <span className={`sidebar__icon`}>
                                 <TbLogout2 size="1.4rem" style={{ display: "flex", alignItems: "center", justifyContent: "center" }} />
                             </span>
                             <span className="sidebar__name">Logout</span>
-                        </Link>
+                        </Button>
                     </div>
                 </div>
             </aside>

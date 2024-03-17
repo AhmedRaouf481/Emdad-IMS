@@ -40,9 +40,10 @@ export default function Product() {
         setOpen(true);
 
     }
-    const { data, isLoading, isError } = useGetProductsQuery(removeEmptyKeys(query));
+    const { data, isLoading, isError, error } = useGetProductsQuery(removeEmptyKeys(query));
     console.log(isLoading);
     console.log(isError);
+    console.log(error);
 
     const tableData = data?.data ? data.data.map((value) => {
         return {

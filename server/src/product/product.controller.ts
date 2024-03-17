@@ -29,7 +29,7 @@ export class ProductController {
     }
   }
 
-  @Public()
+  // @Public()
   @Get()
   async findAllPag(@Query() query) {
     try {

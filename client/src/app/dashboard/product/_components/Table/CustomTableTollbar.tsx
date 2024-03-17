@@ -30,7 +30,6 @@ export default function CustomTableTollbar({ search = "",
             .catch((err) => { console.log(err) })
 
     }, [])
-    console.log(categoryFilter);
 
     return (
         <Box

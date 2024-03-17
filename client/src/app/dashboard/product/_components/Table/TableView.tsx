@@ -170,12 +170,15 @@ export default function TableView({
         if (searchValue.length >= 2) {
             setSearch(searchValue)
             setPage(0)
-            setRowsPerPage(0)
         }
         if (searchValue === "") {
             setSearch(searchValue)
         }
-    }, [searchValue]);
+        if (categoryFilter) {
+            setPage(0)
+
+        }
+    }, [searchValue, categoryFilter]);
 
     return (
         <Box

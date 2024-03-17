@@ -23,21 +23,24 @@ export default function Login() {
     const [error, setError] = useState("")
     const router = useRouter()
     const handleFormSubmit = async (values: ILoginData) => {
-        // api.post('/user/login', values)
-        //     .then((res) => {
-        //         console.log(res)
-        //         localStorage.setItem("token", res.data.token)
-        //         router.push('/dashboard')
-        //     })
-        //     .catch((err) => {
-        //         console.log(err)
-        //         setError(err?.response?.data?.message ?? "Something went wrong")
-        //     })
+        setError("")
         const res = await signIn("credentials", {
             username: values.username,
             password: values.password,
-            callbackUrl: "/dashboard"
-        });
+            redirect: false
+        })
+        console.log(res);
+
+        if (res?.ok) {
+            router.push("/dashboard");
+        } else {
+            if (res?.status === 401) {
+                console.log("error", res.error);
+
+                setError("Invalid Username or Password")
+            }
+        }
+
     }
     return (
         <Stack direction="column" gap={2} width={{ lg: "35vw", md: "50vw", sm: "50vw" }} fontFamily={"inherit"}>

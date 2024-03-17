@@ -7,6 +7,7 @@ import colors from "@/styles/colors";
 import { useEffect, useState } from "react";
 import api from "@/core/api/api";
 import { redirect, useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 interface ILoginData {
     username: string
@@ -21,17 +22,22 @@ const loginSchema = new Yup.ObjectSchema({
 export default function Login() {
     const [error, setError] = useState("")
     const router = useRouter()
-    const handleFormSubmit = (values: ILoginData) => {
-        api.post('/user/login', values)
-            .then((res) => {
-                console.log(res)
-                localStorage.setItem("token", res.data.token)
-                router.push('/dashboard')
-            })
-            .catch((err) => {
-                console.log(err)
-                setError(err?.response?.data?.message ?? "Something went wrong")
-            })
+    const handleFormSubmit = async (values: ILoginData) => {
+        // api.post('/user/login', values)
+        //     .then((res) => {
+        //         console.log(res)
+        //         localStorage.setItem("token", res.data.token)
+        //         router.push('/dashboard')
+        //     })
+        //     .catch((err) => {
+        //         console.log(err)
+        //         setError(err?.response?.data?.message ?? "Something went wrong")
+        //     })
+        const res = await signIn("credentials", {
+            username: values.username,
+            password: values.password,
+            callbackUrl: "/dashboard"
+        });
     }
     return (
         <Stack direction="column" gap={2} width={{ lg: "35vw", md: "50vw", sm: "50vw" }} fontFamily={"inherit"}>

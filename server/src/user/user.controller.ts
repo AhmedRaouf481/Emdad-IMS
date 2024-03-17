@@ -15,8 +15,7 @@ export class UserController {
   @HttpCode(200)
   async login(@Body() loginDto: LoginDTO) {
     try {
-      const token = await this.userService.login(loginDto);
-      return { token }
+      return await this.userService.login(loginDto);
     } catch (error) {
       throw handleError(error);
     }

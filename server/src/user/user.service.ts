@@ -27,7 +27,8 @@ export class UserService {
       const token = await this.jwtService.signAsync({
         sub: user.id,
       });
-      return token;
+      delete user.password;
+      return { token, user };
     } catch (error) {
       throw error
     }

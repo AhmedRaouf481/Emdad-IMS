@@ -9,6 +9,7 @@ import { GoHomeFill } from "react-icons/go";
 import { TbTruckDelivery, TbLogout2 } from "react-icons/tb";
 import { BsFillBoxSeamFill } from "react-icons/bs";
 import { TbReportAnalytics } from "react-icons/tb";
+import { signOut } from "next-auth/react";
 
 const sidebarItems = [
     {
@@ -78,7 +79,7 @@ const Sidebar = () => {
                         <hr />
                         <Link
                             className="sidebar__link"
-                            href={"/login"}
+                            href={"/api/auth/signout"}
                         >
 
                             <span className={`sidebar__icon`}>

@@ -14,14 +14,18 @@ import {
     Tooltip,
     TablePagination,
     TableCellProps,
+    IconButton,
+    Toolbar,
+    Checkbox,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { BiPackage } from "react-icons/bi";
 import CustomTableTollbar from "./CustomTableTollbar";
 import React from "react";
 import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
 import colors from "@/styles/colors";
-import { useGetProductsQuery } from "@/core/redux/slice/api";
+import { Delete, FilterList } from "@mui/icons-material";
+import { alpha } from '@mui/material/styles';
+import EnhancedTableToolbar from "./CheckToolbar";
 // import { SortedColumn } from ".";
 
 export interface HeaderItem {
@@ -179,6 +183,39 @@ export default function TableView({
 
         }
     }, [searchValue, categoryFilter]);
+    const [selected, setSelected] = React.useState<readonly number[]>([]);
+
+
+    const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.checked) {
+            const newSelected = data.map((n: any) => n.id);
+            setSelected(newSelected);
+            return;
+        }
+        setSelected([]);
+    };
+
+    const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
+        const selectedIndex = selected.indexOf(id);
+        let newSelected: readonly number[] = [];
+
+        if (selectedIndex === -1) {
+            newSelected = newSelected.concat(selected, id);
+        } else if (selectedIndex === 0) {
+            newSelected = newSelected.concat(selected.slice(1));
+        } else if (selectedIndex === selected.length - 1) {
+            newSelected = newSelected.concat(selected.slice(0, -1));
+        } else if (selectedIndex > 0) {
+            newSelected = newSelected.concat(
+                selected.slice(0, selectedIndex),
+                selected.slice(selectedIndex + 1),
+            );
+        }
+        setSelected(newSelected);
+    };
+
+
+    const isSelected = (id: number) => selected.indexOf(id) !== -1;
 
     return (
         <Box
@@ -193,7 +230,6 @@ export default function TableView({
                 ...sx,
             }}
         >
-
             <CustomTableTollbar
                 search={searchValue}
                 setSearch={setSearchValue}
@@ -209,16 +245,31 @@ export default function TableView({
                 }}
                 elevation={0}
             >
+
+                <EnhancedTableToolbar
+                    numSelected={selected.length}
+                />
+
                 <Table stickyHeader={stickyHeader} size="small" aria-label="sticky table" >
                     <TableHead>
+
                         <TableRow>
+                            <TableCell padding="checkbox">
+                                <Checkbox
+                                    color="primary"
+                                    indeterminate={selected.length > 0 && selected.length < data.length}
+                                    checked={data.length > 0 && selected.length === data.length}
+                                    onChange={handleSelectAllClick}
+                                    inputProps={{
+                                        'aria-label': 'select all desserts',
+                                    }}
+                                />
+                            </TableCell>
                             {renderItem.map((item) => (
                                 <TableCell
                                     key={item.id}
                                     {...item.tableCellProps}
                                     sx={{
-                                        // minWidth: item.minWidth,
-                                        // bgcolor: "#f6f2fa",
                                         maxHeight: "20px",
 
                                     }}
@@ -229,44 +280,53 @@ export default function TableView({
                                         >
                                             {item.component ? item.component : item.label}
                                         </Typography>
-                                        {/* {item.sortable ? (
-                                            <CustomColumnSort
-                                                columnId={item.id}
-                                                setSortedColumn={setSortedColumn}
-                                                sortableColumn={sortedColumn}
-                                            />
-                                        ) : null} */}
                                     </Box>
                                 </TableCell>
                             ))}
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {(data ?? []).map((item: any, index: number) => (
-                            <TableRow
-                                key={(item as any).id}
-                                onClick={() => onRowClick && onRowClick(item)}
-                                hover={hover}
-                                sx={{
-                                    backgroundColor:
-                                        "white",
-                                    "&:hover": {
-                                        backgroundColor: "#f0f0f0",
-                                    },
-                                }}
-                            >
-                                {renderItem.map((headerItem) =>
-                                    headerItem.isIcon ? (
-                                        <TableCell
-                                            key={headerItem.id}
-                                            {...headerItem.tableCellProps}
-                                            sx={{
-                                                // minWidth: headerItem.minWidth,
-                                                // maxWidth: headerItem.maxWidth,
-                                                // height: rowHeight,
+                        {(data ?? []).map((item: any, index: number) => {
+                            const isItemSelected = isSelected(item.id);
+                            const labelId = `enhanced-table-checkbox-${index}`;
+
+                            return (
+                                <TableRow
+                                    key={(item as any).id}
+                                    onClick={(e) => onRowClick && onRowClick(item)}
+                                    hover={hover}
+                                    sx={{
+                                        backgroundColor:
+                                            "white",
+                                        "&:hover": {
+                                            backgroundColor: "#f0f0f0",
+                                        },
+                                    }}
+                                >
+                                    <TableCell padding="checkbox">
+                                        <Checkbox
+                                            onClick={(e) => {
+                                                handleClick(e, (item as any).id)
                                             }}
-                                        >
-                                            {/* <Box
+                                            color="primary"
+                                            checked={isItemSelected}
+                                            inputProps={{
+                                                'aria-labelledby': labelId,
+                                            }}
+                                        />
+                                    </TableCell>
+                                    {renderItem.map((headerItem) =>
+                                        headerItem.isIcon ? (
+                                            <TableCell
+                                                key={headerItem.id}
+                                                {...headerItem.tableCellProps}
+                                                sx={{
+                                                    // minWidth: headerItem.minWidth,
+                                                    // maxWidth: headerItem.maxWidth,
+                                                    // height: rowHeight,
+                                                }}
+                                            >
+                                                {/* <Box
                                                 sx={{
                                                     height: rowHeight,
                                                     display: "flex",
@@ -274,45 +334,46 @@ export default function TableView({
                                                     alignItems: "center",
                                                 }}
                                             > */}
-                                            {(item as any)[headerItem.id]}
-                                            {/* </Box> */}
-                                        </TableCell>
-                                    ) : (
-                                        <TableCell
-                                            key={headerItem.id}
-                                            {...headerItem.tableCellProps}
-                                            sx={{
-                                                minWidth: headerItem.minWidth,
-                                                maxWidth: headerItem.maxWidth,
-                                                height: rowHeight,
-                                                whiteSpace: "nowrap",
-                                                overflow: "hidden",
-                                                textOverflow: "ellipsis",
-                                            }}
-                                        >
-                                            <Tooltip
-                                                enterDelay={1000}
-                                                title={(item as any)[headerItem.id]}
+                                                {(item as any)[headerItem.id]}
+                                                {/* </Box> */}
+                                            </TableCell>
+                                        ) : (
+                                            <TableCell
+                                                key={headerItem.id}
+                                                {...headerItem.tableCellProps}
+                                                sx={{
+                                                    minWidth: headerItem.minWidth,
+                                                    maxWidth: headerItem.maxWidth,
+                                                    height: rowHeight,
+                                                    whiteSpace: "nowrap",
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                }}
                                             >
-                                                <Typography
-                                                    sx={{
-                                                        fontSize: "0.8rem",
-                                                        textAlign: "center", // Center the text horizontally
-                                                        lineHeight: rowHeight, // Center the text vertically
-                                                        overflow: "hidden",
-                                                        textOverflow: "ellipsis",
-                                                        display: "inline-block", // Ensure ellipsis works properly
-                                                        maxWidth: "100%", // Ensure text doesn't overflow TableCell
-                                                    }}
+                                                <Tooltip
+                                                    enterDelay={1000}
+                                                    title={(item as any)[headerItem.id]}
                                                 >
-                                                    {(item as any)[headerItem.id]}
-                                                </Typography>
-                                            </Tooltip>
-                                        </TableCell>
-                                    )
-                                )}
-                            </TableRow>
-                        ))}
+                                                    <Typography
+                                                        sx={{
+                                                            fontSize: "0.8rem",
+                                                            textAlign: "center", // Center the text horizontally
+                                                            lineHeight: rowHeight, // Center the text vertically
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis",
+                                                            display: "inline-block", // Ensure ellipsis works properly
+                                                            maxWidth: "100%", // Ensure text doesn't overflow TableCell
+                                                        }}
+                                                    >
+                                                        {(item as any)[headerItem.id]}
+                                                    </Typography>
+                                                </Tooltip>
+                                            </TableCell>
+                                        )
+                                    )}
+                                </TableRow>
+                            )
+                        })}
                     </TableBody>
                 </Table>
             </TableContainer>

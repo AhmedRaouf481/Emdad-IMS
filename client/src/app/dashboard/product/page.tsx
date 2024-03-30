@@ -3,11 +3,12 @@
 import { Box } from "@mui/material";
 import TableView from "./_components/Table/TableView";
 import { header } from "./_components/Table/data";
-import { SetStateAction, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useGetProductsQuery } from "@/core/redux/slice/api";
 import ActionButtons from "@/app/dashboard/product/_components/Table/ButtonGroup";
 import CustomizedDialog from "@/components/CustomizedDialog";
 import CreateOrder from "../order/_components/CreateOrder";
+import { signOut } from "next-auth/react";
 
 const removeEmptyKeys = (object: Record<string, any>) => {
     Object.keys(object).forEach(key => {
@@ -44,6 +45,12 @@ export default function Product() {
     console.log(isLoading);
     console.log(isError);
     console.log(error);
+    if (isError) {
+        // TODO: modify type for error
+        if ((error as any)?.status === 401) {
+            signOut()
+        }
+    }
 
     const tableData = data?.data ? data.data.map((value) => {
         return {

@@ -11,7 +11,7 @@ import api from "@/core/api/api"
 const theme = createTheme({
     palette: {
         primary: {
-            main: colors.secondaryColor
+            main: colors.orange
         },
         secondary: {
             main: colors.purple

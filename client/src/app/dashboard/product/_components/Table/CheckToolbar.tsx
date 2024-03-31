@@ -4,16 +4,17 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import { Button } from '@mui/material';
 
 
 interface EnhancedTableToolbarProps {
     numSelected: number;
+    handleSelectedButtonClick: (e: any) => void;
 }
 
 export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-    const { numSelected } = props;
+    const { numSelected, handleSelectedButtonClick } = props;
 
     return (
         <Toolbar
@@ -46,10 +47,18 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 </Typography>
             )}
             {numSelected > 0 ? (
-                <Tooltip title="Delete">
-                    <IconButton>
-                        <DeleteIcon />
-                    </IconButton>
+                <Tooltip title="Make Order">
+                    <Button
+                        variant="outlined"
+                        color="secondary"
+                        // size="small"
+                        sx={{
+                            width: "15%"
+                        }}
+                        onClick={handleSelectedButtonClick}
+                    >
+                        Make Order
+                    </Button>
                 </Tooltip>
             ) : (
                 <Tooltip title="Filter list">

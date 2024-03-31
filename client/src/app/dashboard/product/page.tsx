@@ -3,7 +3,7 @@
 import { Box } from "@mui/material";
 import TableView from "./_components/Table/TableView";
 import { header } from "./_components/Table/data";
-import { useRef, useState } from "react";
+import { SetStateAction, useRef, useState } from "react";
 import { useGetProductsQuery } from "@/core/redux/slice/api";
 import ActionButtons from "@/app/dashboard/product/_components/Table/ButtonGroup";
 import CustomizedDialog from "@/components/CustomizedDialog";
@@ -26,6 +26,8 @@ export default function Product() {
     const [categoryFilter, setCategoryFilter] = useState<any>()
     const [open, setOpen] = useState(false);
     const [rowData, setRowData] = useState<any>()
+    const [selected, setSelected] = useState<readonly string[]>([]);
+
 
     const orderFormRef = useRef(null)
 
@@ -61,6 +63,9 @@ export default function Product() {
         }
     }) : []
 
+    console.log(selected);
+
+
     return (
         <>
             <Box mt={1} mr={4}>
@@ -79,10 +84,13 @@ export default function Product() {
                     setSearch={setSearchValue}
                     categoryFilter={categoryFilter}
                     setCategoryFilter={setCategoryFilter}
+                    selected={selected}
+                    setSelected={setSelected}
+                    handleSelectedButtonClick={handleOrderClick}
                 />
             </Box>
             <CustomizedDialog open={open} setOpen={setOpen}>
-                <CreateOrder data={rowData} />
+                <CreateOrder data={selected} />
             </CustomizedDialog>
         </>
     );

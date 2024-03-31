@@ -44,7 +44,7 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
 
 
     const [clientOpen, setClientOpen] = useState(false);
-    const productData = useGetAllProductsQuery({}).data
+    const productData = useGetAllProductsQuery({}).data ?? []
     let clientData = useGetAllClientsQuery({}).data
     const [clients, setClients] = useState<any>(clientData)
 
@@ -82,8 +82,9 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
     }
 
 
-    // console.log(data);
-    console.log(productData);
+    console.log(productData[0]?.id);
+    console.log((data as string[]).includes(productData[0]?.id));
+    console.log(productData?.filter((product: any) => (data as string[]).includes(product.id)));
 
 
     return (
@@ -99,7 +100,7 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
                         purchasingNum: "",
                         qty: "",
                         client: undefined,
-                        products: [productData?.find((product: any) => product.code === data.code)]
+                        products: [...productData?.filter((product: any) => (data as string[]).includes(product.id))]
                     }}
                     validationSchema={orderSchema}
                     onSubmit={(values) => { console.log(values); return handleFormSubmit(values) }}

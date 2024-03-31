@@ -11,11 +11,11 @@ export default function ActionButtons(
 ) {
     return (
         <Box >
-
+            {/* 
             <IconButton color='info' aria-label='Order' title='Order'
                 onClick={handleOrderClick}>
                 <AssignmentRoundedIcon />
-            </IconButton>
+            </IconButton> */}
 
             <IconButton color='success' aria-label='Edit' title='Edit'>
                 <EditRounded />

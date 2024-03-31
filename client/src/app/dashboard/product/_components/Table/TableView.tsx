@@ -106,6 +106,8 @@ interface Props {
     variantBackground?: boolean;
     rowHeight?: string;
     initSortedColumn?: SortedColumn;
+    selected: readonly string[]
+    setSelected: React.Dispatch<React.SetStateAction<readonly string[]>>
     page: number
     setPage: React.Dispatch<React.SetStateAction<number>>
     rowsPerPage: number
@@ -115,6 +117,7 @@ interface Props {
     categoryFilter: {}
     setCategoryFilter: React.Dispatch<React.SetStateAction<{}>>
     total: number
+    handleSelectedButtonClick: (e: Event) => void
 }
 
 export default function TableView({
@@ -138,7 +141,10 @@ export default function TableView({
     search,
     setSearch,
     categoryFilter,
-    setCategoryFilter
+    setCategoryFilter,
+    selected,
+    setSelected,
+    handleSelectedButtonClick
 }: Props) {
 
     // const [page, setPage] = useState(0);
@@ -183,7 +189,6 @@ export default function TableView({
 
         }
     }, [searchValue, categoryFilter]);
-    const [selected, setSelected] = React.useState<readonly number[]>([]);
 
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -195,9 +200,9 @@ export default function TableView({
         setSelected([]);
     };
 
-    const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
+    const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
         const selectedIndex = selected.indexOf(id);
-        let newSelected: readonly number[] = [];
+        let newSelected: readonly string[] = [];
 
         if (selectedIndex === -1) {
             newSelected = newSelected.concat(selected, id);
@@ -215,7 +220,7 @@ export default function TableView({
     };
 
 
-    const isSelected = (id: number) => selected.indexOf(id) !== -1;
+    const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
     return (
         <Box
@@ -248,6 +253,7 @@ export default function TableView({
 
                 <EnhancedTableToolbar
                     numSelected={selected.length}
+                    handleSelectedButtonClick={handleSelectedButtonClick}
                 />
 
                 <Table stickyHeader={stickyHeader} size="small" aria-label="sticky table" >

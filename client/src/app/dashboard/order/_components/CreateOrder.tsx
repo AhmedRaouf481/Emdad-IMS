@@ -1,7 +1,7 @@
 "use client"
 
-import { Box, Button, FormHelperText, Stack, TextField } from "@mui/material";
-import { Formik, useFormikContext } from "formik";
+import { Accordion, Box, Button, FormHelperText, IconButton, Stack, TextField } from "@mui/material";
+import { Field, FieldArray, FieldProps, Formik, getIn, useFormikContext } from "formik";
 import InputField from "@/components/InputField";
 import * as Yup from "yup"
 import { useEffect, useState } from "react";
@@ -13,20 +13,31 @@ import SelectField from "@/components/SelectField";
 import { useGetAllClientsQuery, useGetAllProductsQuery } from "@/core/redux/slice/api";
 import CreateClient from "./CreateClient";
 import CustomizedDialog from "@/components/CustomizedDialog";
+import AccordionGroup from "@/components/AccordionGroup";
+import { Clear } from "@mui/icons-material";
 
+
+interface ProductValues {
+    code: string
+    qty: number
+}
 
 interface IOrderData {
     purchasingNum: string
-    qty: string
     client?: { label: string, id: string }
-    products: any[]
+    products: ProductValues[]
 }
 
 const orderSchema = new Yup.ObjectSchema({
     purchasingNum: Yup.string().required("Purchasing Number is required"),
-    qty: Yup.string().required("Quantity is required"),
+
     client: Yup.object(),
-    products: Yup.array().required("Products is required")
+    products: Yup.array().of(
+        Yup.object().shape({
+            code: Yup.string().required("Product code is required"),
+            qty: Yup.string().required("Quantity is required"),
+        }).required("Products is required")
+    )
 })
 
 const UpdateData = ({ data = null }: { data: any }) => {
@@ -63,28 +74,24 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
 
 
     const handleFormSubmit = (values: IOrderData) => {
-        const { client, products, ...restValues } = values
-        const data = {
-            ...restValues,
-            clientId: client?.id,
-            productsIds: products.map(product => product.id),
-        }
-        api.post('/order', data)
-            .then((res) => {
-                console.log(res)
-                setError("")
+        // const { client, products, ...restValues } = values
+        // const data = {
+        //     ...restValues,
+        //     clientId: client?.id,
+        //     productsIds: products.map(product => product.id),
+        // }
+        // api.post('/order', data)
+        //     .then((res) => {
+        //         console.log(res)
+        //         setError("")
 
-            })
-            .catch((err) => {
-                console.log(err)
-                setError(err?.response?.data?.message ?? "Something went wrong")
-            })
+        //     })
+        //     .catch((err) => {
+        //         console.log(err)
+        //         setError(err?.response?.data?.message ?? "Something went wrong")
+        //     })
     }
 
-
-    console.log(productData[0]?.id);
-    console.log((data as string[]).includes(productData[0]?.id));
-    console.log(productData?.filter((product: any) => (data as string[]).includes(product.id)));
 
 
     return (
@@ -98,9 +105,11 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
                 <Formik
                     initialValues={{
                         purchasingNum: "",
-                        qty: "",
                         client: undefined,
-                        products: [...productData?.filter((product: any) => (data as string[]).includes(product.id))]
+                        products: [{
+                            code: "",
+                            qty: 0,
+                        }]
                     }}
                     validationSchema={orderSchema}
                     onSubmit={(values) => { console.log(values); return handleFormSubmit(values) }}
@@ -132,38 +141,87 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
                                         }
                                         error={errors.purchasingNum && touched.purchasingNum ? true : false}
                                     />
-                                    <InputField
-                                        title="Quantity*"
-                                        required
-                                        name="qty"
-                                        value={values.qty}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        placeholder="Enter order quantity"
-                                        type="number"
-                                        helperText={
-                                            errors.qty && touched.qty ? errors.qty : ""
-                                        }
-                                        error={errors.qty && touched.qty ? true : false}
-                                    />
+                                    {/* <AccordionGroup /> */}
+                                    <FieldArray name="products">
+                                        {({ push, remove }) => (
+                                            <div>
+                                                {values.products.map((p, index) => {
+                                                    const qty = `products[${index}].qty`;
+                                                    const touchedQty = getIn(touched, qty);
+                                                    const errorQty = getIn(errors, qty);
 
-                                    <SelectField
-                                        multiple
-                                        limitTags={2}
-                                        id="multiple-limit-tags"
-                                        title="Product"
-                                        options={productData ?? []}
-                                        disableCloseOnSelect
-                                        getOptionLabel={(option) => option?.code}
-                                        renderInput={(params) => (
-                                            <TextField {...params} name="products" placeholder="Product" />
+                                                    const code = `products[${index}].code`;
+                                                    const touchedCode = getIn(touched, code);
+                                                    const errorCode = getIn(errors, code);
+
+                                                    return (
+                                                        <Stack key={index} direction={"row"} gap={2} sx={{
+                                                            width: "100%"
+                                                        }}>
+                                                            <SelectField
+                                                                title="Product"
+                                                                options={productData ?? []}
+                                                                getOptionLabel={(option) => option?.code}
+                                                                renderInput={(params) => (
+                                                                    <TextField {...params} name={code} placeholder="Product" />
+                                                                )}
+                                                                value={p.code}
+                                                                onChange={(e, value) => {
+                                                                    const event = { ...e, target: { ...e.target, name: code, value: value } };
+                                                                    handleChange(event);
+                                                                }} />
+
+                                                            <InputField
+                                                                title="Quantity"
+                                                                variant="outlined"
+                                                                name={qty}
+                                                                value={p.qty}
+                                                                required
+                                                                type="number"
+                                                                InputProps={{
+                                                                    inputProps: { min: 0 }
+                                                                }}
+                                                                helperText={
+                                                                    touchedQty && errorQty
+                                                                        ? errorQty
+                                                                        : ""
+                                                                }
+                                                                error={Boolean(touchedQty && errorQty)}
+                                                                onChange={handleChange}
+                                                                onBlur={handleBlur}
+                                                            />
+                                                            <Box sx={{
+                                                                display: 'flex',
+                                                                alignItems: 'end'
+                                                            }}>
+
+                                                                <IconButton
+                                                                    sx={{
+                                                                        pb: 2
+                                                                    }}
+
+                                                                    onClick={() => remove(index)}>
+                                                                    <Clear />
+                                                                </IconButton>
+                                                            </Box>
+
+                                                        </Stack>
+                                                    );
+                                                })}
+
+                                                <Button
+                                                    type="button"
+                                                    variant="outlined"
+                                                    onClick={() =>
+                                                        push({ code: "", qty: 0 })
+                                                    }
+                                                >
+                                                    Add
+                                                </Button>
+                                            </div>
                                         )}
-                                        value={values.products}
-                                        onChange={(e, value) => {
-                                            const event = { ...e, target: { ...e.target, name: "products", value: value } };
-                                            handleChange(event);
-                                        }}
-                                    />
+                                    </FieldArray>
+
                                     <Stack direction={{ md: "row", sm: "column" }} gap={1} width={"100%"} alignItems={"end"}>
 
                                         <SelectField
@@ -209,7 +267,7 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
 
                 </Formik>
             </Box >
-            <CustomizedDialog open={clientOpen} setOpen={setClientOpen}>
+            <CustomizedDialog open={clientOpen} setOpen={setClientOpen} maxWidth={"xs"}>
                 <CreateClient setOpen={setClientOpen} />
             </CustomizedDialog>
         </>

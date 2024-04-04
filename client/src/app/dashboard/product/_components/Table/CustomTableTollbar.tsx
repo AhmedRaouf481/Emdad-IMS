@@ -10,6 +10,7 @@ import { Autocomplete, AutocompleteRenderInputParams, Box, TextField } from '@mu
 import SelectField from '@/components/SelectField';
 import api from '@/core/api/api';
 import { useEffect, useState } from 'react';
+import EnhancedTableToolbar from './CheckToolbar';
 
 interface CustomTableTollbarProps {
     search: string
@@ -17,12 +18,14 @@ interface CustomTableTollbarProps {
     setSearch: any
     categoryFilter: {}
     setCategoryFilter: any
+    numSelected: number;
+    handleSelectedButtonClick: (e: any) => void;
 }
 export default function CustomTableTollbar({ search = "",
     setSearch,
     width,
     categoryFilter,
-    setCategoryFilter }: CustomTableTollbarProps) {
+    setCategoryFilter, numSelected, handleSelectedButtonClick }: CustomTableTollbarProps) {
     const [categories, setCategories] = useState([])
     useEffect(() => {
         api.get('/product/category')
@@ -43,6 +46,7 @@ export default function CustomTableTollbar({ search = "",
                 width: width,
             }}
         >
+
             <Autocomplete
                 size='small'
 
@@ -92,6 +96,12 @@ export default function CustomTableTollbar({ search = "",
                 </IconButton>
 
             </Paper>
+            <EnhancedTableToolbar
+                numSelected={numSelected}
+                handleSelectedButtonClick={handleSelectedButtonClick}
+                sx={{
+                    width: "50%"
+                }} />
         </Box>
     );
 }

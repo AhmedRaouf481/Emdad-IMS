@@ -12,9 +12,8 @@ api.interceptors.request.use(async (config) => {
     if (session) {
         console.log(session.token);
 
-        config.headers.common = {
-            Authorization: `Bearer ${session.token}`
-        }
+        config.headers.Authorization = `Bearer ${session.token}`
+
     }
     console.log(config);
 

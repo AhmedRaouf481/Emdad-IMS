@@ -1,9 +1,11 @@
 import * as React from 'react';
 import Autocomplete, { AutocompleteProps } from '@mui/material/Autocomplete';
-import { Stack, Typography } from '@mui/material';
+import { FormHelperText, Stack, Typography } from '@mui/material';
 
 interface SelectFieldProps extends AutocompleteProps<any, boolean, boolean, boolean, any> {
     title?: string
+    errors?: any
+    touched?: any
 }
 
 export default function SelectField(
@@ -31,6 +33,11 @@ export default function SelectField(
                 size='small'
                 {...props}
             />
+            <FormHelperText
+                error={props.errors && props.touched ? true : false}
+            >{props.errors && props.touched
+                ? props.errors
+                : ""}</FormHelperText>
         </Stack>
 
 

@@ -5,12 +5,13 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { Button } from '@mui/material';
+import { Button, SxProps } from '@mui/material';
 
 
 interface EnhancedTableToolbarProps {
     numSelected: number;
     handleSelectedButtonClick: (e: any) => void;
+    sx?: SxProps
 }
 
 export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
@@ -19,13 +20,16 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     return (
         <Toolbar
             sx={{
-                pl: { sm: 2 },
-                pr: { xs: 1, sm: 1 },
+                // pl: { sm: 2 },
+                // pr: { xs: 1, sm: 1 },
                 ...(numSelected > 0 && {
                     bgcolor: (theme) =>
                         alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
                 }),
+                ...props.sx
             }}
+
+            variant='dense'
         >
             {numSelected > 0 ? (
                 <Typography
@@ -43,7 +47,7 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                     id="tableTitle"
                     component="div"
                 >
-                    Nutrition
+
                 </Typography>
             )}
             {numSelected > 0 ? (
@@ -51,22 +55,16 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                     <Button
                         variant="outlined"
                         color="secondary"
-                        // size="small"
+                        size="small"
                         sx={{
-                            width: "15%"
+                            width: "35%"
                         }}
                         onClick={handleSelectedButtonClick}
                     >
                         Make Order
                     </Button>
                 </Tooltip>
-            ) : (
-                <Tooltip title="Filter list">
-                    <IconButton>
-                        <FilterListIcon />
-                    </IconButton>
-                </Tooltip>
-            )}
+            ) : null}
         </Toolbar>
     );
 }

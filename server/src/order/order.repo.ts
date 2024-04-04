@@ -12,7 +12,7 @@ export class OrderRepo extends PrismaGenericRepo<Prisma.OrderCreateInput, Order>
 
     async create_order(data: CreateOrderDto) {
         try {
-            let { productsIds, client, clientId, ...orderData } = data
+            let { products, client, clientId, ...orderData } = data
             let clinetConnectOrCreate;
             if (client) {
                 clinetConnectOrCreate = {
@@ -25,13 +25,32 @@ export class OrderRepo extends PrismaGenericRepo<Prisma.OrderCreateInput, Order>
                     }
                 }
             }
-            const order = await this.prismaService.order.create({
-                data: {
-                    ...orderData,
-                    products: {
-                        connect: productsIds.map((productId) => ({ id: productId }))
-                    },
-                    client: clinetConnectOrCreate
+            const order = await this.prismaService.$transaction(async (tx) => {
+                try {
+
+                    const newOrder = await tx.order.create({
+                        data: {
+                            ...orderData,
+                            products: {
+                                create: products.map(product => ({
+                                    productId: product.product.id,
+                                    qty: product.qty
+                                }))
+                            },
+                            client: clinetConnectOrCreate
+                        }
+                    })
+                    products.forEach(async (product) => {
+                        await tx.product.update({
+                            where: { id: product.product.id },
+                            data: {
+                                qty: { decrement: product.qty },
+                            }
+                        })
+                    })
+                    return newOrder
+                } catch (error) {
+                    throw error
                 }
             })
             return order

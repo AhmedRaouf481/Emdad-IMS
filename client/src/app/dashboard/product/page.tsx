@@ -26,7 +26,7 @@ export default function Product() {
     const [categoryFilter, setCategoryFilter] = useState<any>()
     const [open, setOpen] = useState(false);
     const [rowData, setRowData] = useState<any>()
-    const [selected, setSelected] = useState<readonly string[]>([]);
+    const [selected, setSelected] = useState<string[]>([]);
 
 
     const orderFormRef = useRef(null)

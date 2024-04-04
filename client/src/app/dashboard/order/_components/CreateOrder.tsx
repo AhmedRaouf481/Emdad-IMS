@@ -13,12 +13,11 @@ import SelectField from "@/components/SelectField";
 import { useGetAllClientsQuery, useGetAllProductsQuery } from "@/core/redux/slice/api";
 import CreateClient from "./CreateClient";
 import CustomizedDialog from "@/components/CustomizedDialog";
-import AccordionGroup from "@/components/AccordionGroup";
 import { Clear } from "@mui/icons-material";
 
 
 interface ProductValues {
-    code: string
+    product?: { code: string, id: string }
     qty: number
 }
 
@@ -34,24 +33,15 @@ const orderSchema = new Yup.ObjectSchema({
     client: Yup.object(),
     products: Yup.array().of(
         Yup.object().shape({
-            code: Yup.string().required("Product code is required"),
-            qty: Yup.string().required("Quantity is required"),
+            product: Yup.object().required("Product code is required"),
+            qty: Yup.number().required("Quantity is required").min(1, "Quantity must be greater than or equal to 1"),
         }).required("Products is required")
     )
 })
 
-const UpdateData = ({ data = null }: { data: any }) => {
-    const { setFieldValue } = useFormikContext()
-    useEffect(() => {
-        console.log("555555555");
-        setFieldValue("products", data)
-    }, [data])
-    return null
-}
 
-export default function CreateOrder({ setFieldValue, formRef, data }: { setFieldValue?: any, formRef?: React.MutableRefObject<any>, data?: any }) {
+export default function CreateOrder({ setFieldValue, formRef, data }: { setFieldValue?: any, formRef?: React.MutableRefObject<any>, data?: string[] }) {
     const [error, setError] = useState("")
-    const router = useRouter()
 
 
     const [clientOpen, setClientOpen] = useState(false);
@@ -74,26 +64,36 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
 
 
     const handleFormSubmit = (values: IOrderData) => {
-        // const { client, products, ...restValues } = values
-        // const data = {
-        //     ...restValues,
-        //     clientId: client?.id,
-        //     productsIds: products.map(product => product.id),
-        // }
-        // api.post('/order', data)
-        //     .then((res) => {
-        //         console.log(res)
-        //         setError("")
+        // console.log(values)
+        const { client, products, ...restValues } = values
+        const data = {
+            ...restValues,
+            clientId: client?.id,
+            products,
+        }
+        api.post('/order', data)
+            .then((res) => {
+                console.log(res)
+                setError("")
 
-        //     })
-        //     .catch((err) => {
-        //         console.log(err)
-        //         setError(err?.response?.data?.message ?? "Something went wrong")
-        //     })
+            })
+            .catch((err) => {
+                console.log(err)
+                setError(err?.response?.data?.message ?? "Something went wrong")
+            })
     }
 
+    const calcProductsIntialValues = () => {
+        let products: ProductValues[] = [{ product: undefined, qty: 0 }]
+        if (data) {
 
+            products = productData.filter(product => data.includes(product.id))
+            console.log(products);
+        }
 
+        return products.map((product: any) => ({ product: { code: product.code, id: product.id }, qty: 0 }))
+
+    }
     return (
         <>
             <Header title="Order" />
@@ -106,13 +106,10 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
                     initialValues={{
                         purchasingNum: "",
                         client: undefined,
-                        products: [{
-                            code: "",
-                            qty: 0,
-                        }]
+                        products: calcProductsIntialValues()
                     }}
                     validationSchema={orderSchema}
-                    onSubmit={(values) => { console.log(values); return handleFormSubmit(values) }}
+                    onSubmit={(values) => handleFormSubmit(values)}
                     innerRef={formRef}
                 >
                     {({
@@ -150,9 +147,9 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
                                                     const touchedQty = getIn(touched, qty);
                                                     const errorQty = getIn(errors, qty);
 
-                                                    const code = `products[${index}].code`;
-                                                    const touchedCode = getIn(touched, code);
-                                                    const errorCode = getIn(errors, code);
+                                                    const product = `products[${index}].product`;
+                                                    const touchedProduct = getIn(touched, product);
+                                                    const errorProduct = getIn(errors, product);
 
                                                     return (
                                                         <Stack key={index} direction={"row"} gap={2} sx={{
@@ -160,17 +157,25 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
                                                         }}>
                                                             <SelectField
                                                                 title="Product"
-                                                                options={productData ?? []}
-                                                                getOptionLabel={(option) => option?.code}
+                                                                options={productData?.map((v: any) => ({ code: v.code, id: v.id })) ?? []}
+                                                                getOptionLabel={(option) => option.code}
+                                                                isOptionEqualToValue={(option, value) => option.id === value.id}
+                                                                renderOption={(props, option) => {
+                                                                    return (
+                                                                        <Box component='li' {...props} key={option.id}>{option.code}</Box>
+                                                                    );
+                                                                }}
                                                                 renderInput={(params) => (
-                                                                    <TextField {...params} name={code} placeholder="Product" />
+                                                                    <TextField {...params} name={product} placeholder="Product" error={errorProduct} />
                                                                 )}
-                                                                value={p.code}
+                                                                value={p.product}
                                                                 onChange={(e, value) => {
-                                                                    const event = { ...e, target: { ...e.target, name: code, value: value } };
+                                                                    const event = { ...e, target: { ...e.target, name: product, value: value } };
                                                                     handleChange(event);
-                                                                }} />
-
+                                                                }}
+                                                                errors={errorProduct}
+                                                                touched={touchedProduct}
+                                                            />
                                                             <InputField
                                                                 title="Quantity"
                                                                 variant="outlined"
@@ -213,7 +218,7 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
                                                     type="button"
                                                     variant="outlined"
                                                     onClick={() =>
-                                                        push({ code: "", qty: 0 })
+                                                        push({ product: undefined, qty: 0 })
                                                     }
                                                 >
                                                     Add
@@ -228,6 +233,12 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
                                             id="select-client"
                                             title="Client"
                                             options={clients?.map((v: any) => ({ label: v.name, id: v.id })) ?? []}
+                                            isOptionEqualToValue={(option, value) => option.id === value.id}
+                                            renderOption={(props, option) => {
+                                                return (
+                                                    <Box component='li' {...props} key={option.id}>{option.label}</Box>
+                                                );
+                                            }}
                                             renderInput={(params) => (
                                                 <TextField {...params} name="client" />
                                             )}

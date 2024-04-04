@@ -106,8 +106,8 @@ interface Props {
     variantBackground?: boolean;
     rowHeight?: string;
     initSortedColumn?: SortedColumn;
-    selected: readonly string[]
-    setSelected: React.Dispatch<React.SetStateAction<readonly string[]>>
+    selected: string[]
+    setSelected: React.Dispatch<React.SetStateAction<string[]>>
     page: number
     setPage: React.Dispatch<React.SetStateAction<number>>
     rowsPerPage: number
@@ -202,7 +202,7 @@ export default function TableView({
 
     const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
         const selectedIndex = selected.indexOf(id);
-        let newSelected: readonly string[] = [];
+        let newSelected: string[] = [];
 
         if (selectedIndex === -1) {
             newSelected = newSelected.concat(selected, id);
@@ -241,6 +241,8 @@ export default function TableView({
                 categoryFilter={categoryFilter}
                 setCategoryFilter={setCategoryFilter}
                 width={width}
+                numSelected={selected.length}
+                handleSelectedButtonClick={handleSelectedButtonClick}
             />
             <TableContainer
                 component={Paper}
@@ -251,10 +253,10 @@ export default function TableView({
                 elevation={0}
             >
 
-                <EnhancedTableToolbar
+                {/* <EnhancedTableToolbar
                     numSelected={selected.length}
                     handleSelectedButtonClick={handleSelectedButtonClick}
-                />
+                /> */}
 
                 <Table stickyHeader={stickyHeader} size="small" aria-label="sticky table" >
                     <TableHead>

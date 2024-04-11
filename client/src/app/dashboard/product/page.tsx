@@ -3,12 +3,14 @@
 import { Box } from "@mui/material";
 import TableView from "./_components/Table/TableView";
 import { header } from "./_components/Table/data";
-import { SetStateAction, useRef, useState } from "react";
+import { SetStateAction, useEffect, useRef, useState } from "react";
 import { useGetProductsQuery } from "@/core/redux/slice/api";
 import ActionButtons from "@/app/dashboard/product/_components/Table/ButtonGroup";
 import CustomizedDialog from "@/components/CustomizedDialog";
 import CreateOrder from "../order/_components/CreateOrder";
 import { signOut } from "next-auth/react";
+import { getAllProducts } from "@/core/redux/thunk/products-thunk";
+import { useAppDispatch } from "@/core/redux/hooks";
 
 const removeEmptyKeys = (object: Record<string, any>) => {
     Object.keys(object).forEach(key => {
@@ -28,8 +30,11 @@ export default function Product() {
     const [rowData, setRowData] = useState<any>()
     const [selected, setSelected] = useState<string[]>([]);
 
+    const dispatch = useAppDispatch()
 
-    const orderFormRef = useRef(null)
+    useEffect(() => {
+        dispatch(getAllProducts())
+    }, [dispatch])
 
     const query = {
         page: page + 1,
@@ -37,12 +42,7 @@ export default function Product() {
         search: searchValue,
         category: categoryFilter?.label ?? undefined
     }
-    console.log(orderFormRef.current);
-    const handleOrderClick = (e: any) => {
-        console.log(rowData);
-        setOpen(true);
 
-    }
     const { data, isLoading, isError, error } = useGetProductsQuery(removeEmptyKeys(query));
     console.log(isLoading);
     console.log(isError);
@@ -54,6 +54,12 @@ export default function Product() {
         }
     }
 
+
+    const handleOrderClick = (e: any) => {
+        console.log(rowData);
+        setOpen(true);
+
+    }
     const tableData = data?.data ? data.data.map((value) => {
         return {
             ...value,

@@ -57,7 +57,7 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                         color="secondary"
                         size="small"
                         sx={{
-                            width: "35%"
+                            width: "40%"
                         }}
                         onClick={handleSelectedButtonClick}
                     >

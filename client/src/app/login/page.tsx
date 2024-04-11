@@ -1,5 +1,5 @@
 "use client"
-import { Box, Button, Divider, FormHelperText, Stack, Typography } from "@mui/material";
+import { Box, Button, Divider, FormHelperText, LinearProgress, Stack, Typography } from "@mui/material";
 import { Formik } from "formik";
 import * as Yup from "yup"
 import InputField from "@/components/InputField";
@@ -21,9 +21,13 @@ const loginSchema = new Yup.ObjectSchema({
 
 export default function Login() {
     const [error, setError] = useState("")
+    const [loading, setLoading] = useState(false)
+
     const router = useRouter()
     const handleFormSubmit = async (values: ILoginData) => {
         setError("")
+        setLoading(true)
+
         const res = await signIn("credentials", {
             username: values.username,
             password: values.password,
@@ -34,6 +38,8 @@ export default function Login() {
         if (res?.ok) {
             router.push("/dashboard");
         } else {
+            setLoading(false)
+
             if (res?.status === 401) {
                 console.log("error", res.error);
 
@@ -117,7 +123,9 @@ export default function Login() {
                     )}
 
                 </Formik>
+
             </Box>
+            <LinearProgress color="info" sx={{ display: loading ? "block" : "none" }} />
         </Stack>
     )
 }

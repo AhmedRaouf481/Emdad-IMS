@@ -1,6 +1,6 @@
 "use client"
 
-import { Accordion, Box, Button, FormHelperText, IconButton, Stack, TextField } from "@mui/material";
+import { Accordion, Box, Button, FormHelperText, IconButton, LinearProgress, Stack, TextField } from "@mui/material";
 import { Field, FieldArray, FieldProps, Formik, getIn, useFormikContext } from "formik";
 import InputField from "@/components/InputField";
 import * as Yup from "yup"
@@ -14,11 +14,13 @@ import { useGetAllClientsQuery, useGetAllProductsQuery } from "@/core/redux/slic
 import CreateClient from "./CreateClient";
 import CustomizedDialog from "@/components/CustomizedDialog";
 import { Clear } from "@mui/icons-material";
+import { ProductState } from "@/core/redux/slice/products-slice";
+import { useAppSelector } from "@/core/redux/hooks";
 
 
 interface ProductValues {
     product?: { code: string, id: string }
-    qty: number
+    qty?: number
 }
 
 interface IOrderData {
@@ -42,10 +44,17 @@ const orderSchema = new Yup.ObjectSchema({
 
 export default function CreateOrder({ setFieldValue, formRef, data }: { setFieldValue?: any, formRef?: React.MutableRefObject<any>, data?: string[] }) {
     const [error, setError] = useState("")
+    const [loading, setLoading] = useState(false)
+    const router = useRouter()
+
+
+    const productState: ProductState = useAppSelector(
+        (state: any) => state.product
+    );
 
 
     const [clientOpen, setClientOpen] = useState(false);
-    const productData = useGetAllProductsQuery({}).data ?? []
+    const productData = productState.products ?? []
     let clientData = useGetAllClientsQuery({}).data
     const [clients, setClients] = useState<any>(clientData)
 
@@ -71,15 +80,20 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
             clientId: client?.id,
             products,
         }
+        setLoading(true)
         api.post('/order', data)
             .then((res) => {
                 console.log(res)
                 setError("")
+                setLoading(false)
+                router.refresh()
+
 
             })
             .catch((err) => {
                 console.log(err)
                 setError(err?.response?.data?.message ?? "Something went wrong")
+                setLoading(false)
             })
     }
 
@@ -87,7 +101,7 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
         let products: ProductValues[] = [{ product: undefined, qty: 0 }]
         if (data) {
 
-            products = productData.filter(product => data.includes(product.id))
+            products = productData.filter(product => data.includes(product.id as string))
             console.log(products);
         }
 
@@ -277,6 +291,7 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
                     }}
 
                 </Formik>
+                <LinearProgress sx={{ display: loading ? "block" : "none" }} />
             </Box >
             <CustomizedDialog open={clientOpen} setOpen={setClientOpen} maxWidth={"xs"}>
                 <CreateClient setOpen={setClientOpen} />

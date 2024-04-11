@@ -7,11 +7,14 @@ import { Box, createTheme } from "@mui/material"
 const theme = createTheme({
     palette: {
         primary: {
-            main: colors.secondaryColor
+            main: colors.secondaryColor,
         },
         secondary: {
             main: colors.purple
         },
+        info: {
+            main: colors.orange
+        }
     }
 })
 export default function LogainLayout({

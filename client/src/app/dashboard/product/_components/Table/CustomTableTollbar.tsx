@@ -52,7 +52,7 @@ export default function CustomTableTollbar({ search = "",
 
                 sx={{
                     width: {
-                        lg: "20%", md: "40%", xs: "100%"
+                        lg: "30%", md: "40%", xs: "100%"
                     },
 
                 }}
@@ -76,7 +76,7 @@ export default function CustomTableTollbar({ search = "",
                     display: 'flex',
                     alignItems: 'center',
                     width: {
-                        lg: "30%", md: "40%", sm: "100%", xs: "100%"
+                        lg: "40%", md: "40%", sm: "100%", xs: "100%"
                     },
                     borderBottom: `1px solid ${colors.orange}`
                 }

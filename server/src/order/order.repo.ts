@@ -25,34 +25,27 @@ export class OrderRepo extends PrismaGenericRepo<Prisma.OrderCreateInput, Order>
                     }
                 }
             }
-            const order = await this.prismaService.$transaction(async (tx) => {
-                try {
-
-                    const newOrder = await tx.order.create({
-                        data: {
-                            ...orderData,
-                            products: {
-                                create: products.map(product => ({
-                                    productId: product.product.id,
-                                    qty: product.qty
-                                }))
-                            },
-                            client: clinetConnectOrCreate
-                        }
-                    })
-                    products.forEach(async (product) => {
-                        await tx.product.update({
-                            where: { id: product.product.id },
-                            data: {
-                                qty: { decrement: product.qty },
-                            }
-                        })
-                    })
-                    return newOrder
-                } catch (error) {
-                    throw error
+            products.forEach(async (product) => {
+                await this.prismaService.product.update({
+                    where: { id: product.product.id },
+                    data: {
+                        qty: { decrement: product.qty },
+                    }
+                })
+            })
+            const order = await this.prismaService.order.create({
+                data: {
+                    ...orderData,
+                    products: {
+                        create: products.map(product => ({
+                            productId: product.product.id,
+                            qty: product.qty
+                        }))
+                    },
+                    client: clinetConnectOrCreate
                 }
             })
+
             return order
         } catch (error) {
             throw error

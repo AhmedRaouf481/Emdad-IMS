@@ -31,13 +31,14 @@ interface Props {
     hover?: boolean;
     rowHeight?: string;
     total: number
+    withCheckbox?: boolean
 }
 
 export default function TableView({
     data,
     renderItem,
     width = "100%",
-    height = "80vh",
+    height = "75vh",
     boxShadow = 10,
     stickyHeader = false,
     sx,
@@ -45,6 +46,7 @@ export default function TableView({
     hover = true,
     rowHeight = "1rem",
     total,
+    withCheckbox = false,
 }: Props) {
     const {
         page,
@@ -139,17 +141,19 @@ export default function TableView({
                     <TableHead>
 
                         <TableRow>
-                            <TableCell padding="checkbox">
-                                <Checkbox
-                                    color="primary"
-                                    indeterminate={selected.length > 0 && selected.length < data.length}
-                                    checked={data.length > 0 && selected.length === data.length}
-                                    onChange={handleSelectAllClick}
-                                    inputProps={{
-                                        'aria-label': 'select all products',
-                                    }}
-                                />
-                            </TableCell>
+                            {withCheckbox ?
+                                <TableCell padding="checkbox">
+                                    <Checkbox
+                                        color="primary"
+                                        indeterminate={selected.length > 0 && selected.length < data.length}
+                                        checked={data.length > 0 && selected.length === data.length}
+                                        onChange={handleSelectAllClick}
+                                        inputProps={{
+                                            'aria-label': 'select all products',
+                                        }}
+                                    />
+                                </TableCell>
+                                : null}
                             {renderItem.map((item) => (
                                 <TableCell
                                     key={item.id}
@@ -188,18 +192,20 @@ export default function TableView({
                                         },
                                     }}
                                 >
-                                    <TableCell padding="checkbox">
-                                        <Checkbox
-                                            onClick={(e) => {
-                                                handleClick(e, (item as any).id)
-                                            }}
-                                            color="primary"
-                                            checked={isItemSelected}
-                                            inputProps={{
-                                                'aria-labelledby': labelId,
-                                            }}
-                                        />
-                                    </TableCell>
+                                    {withCheckbox ?
+                                        <TableCell padding="checkbox">
+                                            <Checkbox
+                                                onClick={(e) => {
+                                                    handleClick(e, (item as any).id)
+                                                }}
+                                                color="primary"
+                                                checked={isItemSelected}
+                                                inputProps={{
+                                                    'aria-labelledby': labelId,
+                                                }}
+                                            />
+                                        </TableCell>
+                                        : null}
                                     {renderItem.map((headerItem) =>
                                         headerItem.isIcon ? (
                                             <TableCell

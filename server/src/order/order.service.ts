@@ -28,9 +28,9 @@ export class OrderService {
   //   }
   // }
 
-  async findAll() {
+  async findAll(query) {
     try {
-      const order = await this.orderRepo.getAll()
+      const order = await this.orderRepo.getAllPaginated(query)
       return order
     } catch (error) {
       throw error

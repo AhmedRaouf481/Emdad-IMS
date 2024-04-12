@@ -4,7 +4,7 @@ import { Autocomplete, Box, TextField } from "@mui/material";
 import TableView from "../../../components/TableView/TableView";
 import { header } from "./_components/Table/data";
 import { useEffect, useState } from "react";
-import { useGetProductsQuery } from "@/core/redux/slice/api";
+import { useGetProductsQuery } from "@/core/redux/slice/api/productsApi";
 import ActionButtons from "@/app/dashboard/product/_components/Table/ButtonGroup";
 import CustomizedDialog from "@/components/CustomizedDialog";
 import CreateOrder from "../order/_components/CreateOrder";
@@ -139,6 +139,7 @@ export default function Product() {
                         stickyHeader={true}
                         onRowClick={(item) => setRowData(item)}
                         total={data?.pagination.total ?? 0}
+                        withCheckbox
                     />
                 </Box>
             </Box>

@@ -1,5 +1,6 @@
 import { PrismaGenericRepo } from "@/shared/prisma-client/prisma-generic.repo";
 import { PrismaService } from "@/shared/prisma-client/prisma.service";
+import pagination from "@/shared/utlis/pagination";
 import { Injectable } from "@nestjs/common";
 import { Product, Prisma } from "@prisma/client";
 interface CustomProductWhereInput extends Prisma.ProductWhereInput {
@@ -12,37 +13,6 @@ export class ProductRepo extends PrismaGenericRepo<Prisma.ProductCreateInput, Pr
         super('product', prismaService)
     }
 
-    pagination(params: { limit: number, page: number, total: number }): {
-        offset?: number
-        current?: number
-        limit?: number
-        total?: number
-        pages: number
-    } {
-        if (params.limit <= 0) {
-            throw {
-                statusCode: 400,
-                msg: "Invalid limit"
-            }
-        }
-        const limit = params.limit
-        const pages = params.total === 0 ? 1 : Math.ceil(params.total / limit)
-        if (params.page < 0 || params.page > pages) {
-            throw {
-                statusCode: 400,
-                msg: "Invalid page number"
-            }
-        }
-        const offset = params.page * limit - limit
-
-        return {
-            offset,
-            current: params.page,
-            limit,
-            total: params.total,
-            pages,
-        }
-    }
 
     async getAllPaginated(query: { [key: string]: any }) {
         try {
@@ -99,7 +69,7 @@ export class ProductRepo extends PrismaGenericRepo<Prisma.ProductCreateInput, Pr
 
 
             // handle pagination
-            let pagination = this.pagination({
+            let paginationObj = pagination({
                 limit: +query.limit ? +query.limit : 10,
                 page: +query.page ? +query.page : 1,
                 total: productsCount
@@ -109,17 +79,17 @@ export class ProductRepo extends PrismaGenericRepo<Prisma.ProductCreateInput, Pr
             const data = await this.prismaService.product.findMany({
                 where: whereObj,
                 orderBy: [{ createdAt: 'desc' }, { name: "asc" }],
-                take: pagination.limit,
-                skip: pagination.offset,
+                take: paginationObj.limit,
+                skip: paginationObj.offset,
                 include: { category: true }
             })
             // await Promise.all(data.map(async (product) => {
             //     product.image = await this.uploadFile_use_cases.mapFile((product.image) as string)
             // }))
 
-            delete pagination.offset
+            delete paginationObj.offset
 
-            return { data, pagination }
+            return { data, pagination: paginationObj }
 
         } catch (error: any) {
             throw error;

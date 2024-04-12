@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -27,9 +27,9 @@ export class OrderController {
   // }
 
   @Get()
-  async findAll() {
+  async findAll(@Query() query) {
     try {
-      return await this.orderService.findAll();
+      return await this.orderService.findAll(query);
     } catch (error) {
       throw handleError(error);
     }

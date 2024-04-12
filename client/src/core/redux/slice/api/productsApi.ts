@@ -39,16 +39,10 @@ export const productsAPI = createApi({
                 url: `product/all`,
             }),
         }),
-
-        getAllClients: builder.query<any[], any>({
-            query: () => ({
-                url: `client`,
-            }),
-        }),
     }),
 });
 
 export const {
     useGetProductsQuery,
-    useGetAllProductsQuery,
-    useGetAllClientsQuery } = productsAPI;
+    useGetAllProductsQuery
+} = productsAPI;

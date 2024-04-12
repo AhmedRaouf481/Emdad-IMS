@@ -61,7 +61,17 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
     const productData = productState.products ?? []
     let clientData = clientState.clients ?? []
 
-
+    const [clients, setClients] = useState<any>(clientData)
+    useEffect(() => {
+        api.get('/client')
+            .then((res) => {
+                console.log(res)
+                setClients(res.data)
+            })
+            .catch((err) => {
+                console.log(err)
+            });
+    }, [clientOpen])
 
 
 
@@ -239,7 +249,7 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
                                         <SelectField
                                             id="select-client"
                                             title="Client"
-                                            options={clientData?.map((v: any) => ({ label: v.name, id: v.id }))}
+                                            options={clients?.map((v: any) => ({ label: v.name, id: v.id }))}
                                             isOptionEqualToValue={(option, value) => option.id === value.id}
                                             renderOption={(props, option) => {
                                                 return (

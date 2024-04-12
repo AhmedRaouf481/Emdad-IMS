@@ -10,12 +10,12 @@ import api from "@/core/api/api";
 import colors from "@/styles/colors";
 import Header from "@/components/layout/Header";
 import SelectField from "@/components/SelectField";
-import { useGetAllClientsQuery, useGetAllProductsQuery } from "@/core/redux/slice/api";
 import CreateClient from "./CreateClient";
 import CustomizedDialog from "@/components/CustomizedDialog";
 import { Clear } from "@mui/icons-material";
 import { ProductState } from "@/core/redux/slice/products-slice";
 import { useAppSelector } from "@/core/redux/hooks";
+import { ClientState } from "@/core/redux/slice/clients-slice";
 
 
 interface ProductValues {
@@ -32,7 +32,7 @@ interface IOrderData {
 const orderSchema = new Yup.ObjectSchema({
     purchasingNum: Yup.string().required("Purchasing Number is required"),
 
-    client: Yup.object(),
+    client: Yup.object().required("Client is required"),
     products: Yup.array().of(
         Yup.object().shape({
             product: Yup.object().required("Product code is required"),
@@ -52,22 +52,15 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
         (state: any) => state.product
     );
 
+    const clientState: ClientState = useAppSelector(
+        (state: any) => state.client
+    );
+
 
     const [clientOpen, setClientOpen] = useState(false);
     const productData = productState.products ?? []
-    let clientData = useGetAllClientsQuery({}).data
-    const [clients, setClients] = useState<any>(clientData)
+    let clientData = clientState.clients ?? []
 
-    useEffect(() => {
-        api.get('/client')
-            .then((res) => {
-                console.log(res)
-                setClients(res.data)
-            })
-            .catch((err) => {
-                console.log(err)
-            });
-    }, [clientOpen])
 
 
 
@@ -86,8 +79,7 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
                 console.log(res)
                 setError("")
                 setLoading(false)
-                router.refresh()
-
+                window.location.reload()
 
             })
             .catch((err) => {
@@ -180,15 +172,16 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
                                                                     );
                                                                 }}
                                                                 renderInput={(params) => (
-                                                                    <TextField {...params} name={product} placeholder="Product" error={errorProduct} />
+                                                                    <TextField {...params} name={product} placeholder="Product" error={errorProduct}
+                                                                        helperText={touchedProduct && errorProduct
+                                                                            ? errorProduct
+                                                                            : ""} />
                                                                 )}
                                                                 value={p.product}
                                                                 onChange={(e, value) => {
                                                                     const event = { ...e, target: { ...e.target, name: product, value: value } };
                                                                     handleChange(event);
                                                                 }}
-                                                                errors={errorProduct}
-                                                                touched={touchedProduct}
                                                             />
                                                             <InputField
                                                                 title="Quantity"
@@ -246,7 +239,7 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
                                         <SelectField
                                             id="select-client"
                                             title="Client"
-                                            options={clients?.map((v: any) => ({ label: v.name, id: v.id })) ?? []}
+                                            options={clientData?.map((v: any) => ({ label: v.name, id: v.id }))}
                                             isOptionEqualToValue={(option, value) => option.id === value.id}
                                             renderOption={(props, option) => {
                                                 return (
@@ -254,7 +247,11 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
                                                 );
                                             }}
                                             renderInput={(params) => (
-                                                <TextField {...params} name="client" />
+                                                <TextField {...params} name="client"
+                                                    helperText={
+                                                        errors.client && touched.client ? errors.client : ""
+                                                    }
+                                                    error={errors.client && touched.client ? true : false} />
                                             )}
                                             value={values.client}
                                             onChange={(e, value) => {
@@ -266,7 +263,7 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
                                             color="secondary"
                                             variant="outlined"
                                             disableElevation
-                                            sx={{ width: { md: "30%", sm: "100%", xs: "100%" }, height: "2.5rem" }}
+                                            sx={{ width: { md: "30%", sm: "100%", xs: "100%" }, height: "2.5rem", mb: errors.client && touched.client ? 3 : 0 }}
                                             onClick={() => { setClientOpen(true) }}
                                         >
                                             Add client

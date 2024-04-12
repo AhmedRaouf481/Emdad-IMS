@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { productsAPI } from './slice/api'
-import { productSlice } from './slice/products-slice'
+import productReducer from './slice/products-slice'
+import clientReducer from './slice/clients-slice'
 
 export const makeStore = () => {
     return configureStore({
         reducer: {
-            product: productSlice.reducer,
+            product: productReducer,
+            client: clientReducer,
             [productsAPI.reducerPath]: productsAPI.reducer
         },
         middleware: (getDefaultMiddleware) =>

@@ -14,88 +14,14 @@ import {
     Tooltip,
     TablePagination,
     TableCellProps,
-    IconButton,
-    Toolbar,
     Checkbox,
 } from "@mui/material";
-import { useEffect, useState } from "react";
-import CustomTableTollbar from "./CustomTableTollbar";
 import React from "react";
-import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
-import colors from "@/styles/colors";
-import { Delete, FilterList } from "@mui/icons-material";
-import { alpha } from '@mui/material/styles';
-import EnhancedTableToolbar from "./CheckToolbar";
-// import { SortedColumn } from ".";
-
-export interface HeaderItem {
-    id: string;
-    label: string;
-    minWidth?: number;
-    maxWidth?: number;
-    tableCellProps?: TableCellProps;
-    format?: (value: number) => string;
-    onClick?: () => void;
-    isIcon?: boolean;
-    component?: React.ReactNode;
-    sortable?: boolean;
-    filterable?: boolean;
-    searchable?: boolean;
-}
-
-export interface SortedColumn {
-    id: string;
-    isAscending: boolean;
-}
-interface SortProps {
-    columnId: string;
-    setSortedColumn: (sortableColumn: SortedColumn) => void;
-    sortableColumn: SortedColumn;
-}
-const CustomColumnSort = ({
-    columnId,
-    setSortedColumn,
-    sortableColumn,
-}: SortProps) => {
-    return (
-        <Box
-            sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100%",
-                position: "relative",
-                cursor: "pointer",
-                marginX: "0.5rem",
-                opacity: `${sortableColumn.id === columnId ? "1" : "0.2"}`,
-                transition: "0.2s",
-                transform: `rotate(${sortableColumn.isAscending && sortableColumn.id === columnId
-                    ? 0
-                    : -180
-                    }deg)`,
-                transformOrigin: "50% 50%",
-                "&:hover": {
-                    opacity: `${sortableColumn.id === columnId ? "1" : "0.7"}`,
-                },
-            }}
-            onClick={() => {
-                setSortedColumn({
-                    id: columnId,
-                    isAscending:
-                        sortableColumn.id === columnId ? !sortableColumn.isAscending : true,
-                });
-            }}
-        >
-            <ArrowUpwardRoundedIcon />
-        </Box>
-    );
-};
-
-// export default CustomColumnSort;
+import { useTableContext } from "@/components/TableView/context";
 
 interface Props {
     data: any[];
-    renderItem: HeaderItem[];
+    renderItem: any[];
     width?: string;
     height?: string;
     boxShadow?: number;
@@ -103,21 +29,8 @@ interface Props {
     sx?: SxProps;
     onRowClick?: (item?: any) => void;
     hover?: boolean;
-    variantBackground?: boolean;
     rowHeight?: string;
-    initSortedColumn?: SortedColumn;
-    selected: string[]
-    setSelected: React.Dispatch<React.SetStateAction<string[]>>
-    page: number
-    setPage: React.Dispatch<React.SetStateAction<number>>
-    rowsPerPage: number
-    setRowsPerPage: React.Dispatch<React.SetStateAction<number>>
-    search: string
-    setSearch: React.Dispatch<React.SetStateAction<string>>
-    categoryFilter: {}
-    setCategoryFilter: React.Dispatch<React.SetStateAction<{}>>
     total: number
-    handleSelectedButtonClick: (e: Event) => void
 }
 
 export default function TableView({
@@ -130,24 +43,17 @@ export default function TableView({
     sx,
     onRowClick,
     hover = true,
-    variantBackground = true,
     rowHeight = "1rem",
-    initSortedColumn = { id: renderItem[0].id, isAscending: true },
-    page,
-    setPage,
-    rowsPerPage,
-    setRowsPerPage,
     total,
-    search,
-    setSearch,
-    categoryFilter,
-    setCategoryFilter,
-    selected,
-    setSelected,
-    handleSelectedButtonClick
 }: Props) {
-
-    // const [page, setPage] = useState(0);
+    const {
+        page,
+        setPage,
+        rowsPerPage,
+        setRowsPerPage,
+        selected,
+        setSelected,
+    } = useTableContext()
 
 
     const handleChangePage = (
@@ -167,28 +73,12 @@ export default function TableView({
 
     // TODO
     //* ----------------------- Handle Sorting
-    const [sortedColumn, setSortedColumn] =
-        useState<SortedColumn>(initSortedColumn);
+    // const [sortedColumn, setSortedColumn] =
+    //     useState<SortedColumn>(initSortedColumn);
 
-    useEffect(() => {
-        console.log(sortedColumn);
-    }, [sortedColumn]);
-
-    //* ----------------------- Handle Searching
-    const [searchValue, setSearchValue] = useState<string>("");
-    useEffect(() => {
-        if (searchValue.length >= 2) {
-            setSearch(searchValue)
-            setPage(0)
-        }
-        if (searchValue === "") {
-            setSearch(searchValue)
-        }
-        if (categoryFilter) {
-            setPage(0)
-
-        }
-    }, [searchValue, categoryFilter]);
+    // useEffect(() => {
+    //     console.log(sortedColumn);
+    // }, [sortedColumn]);
 
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -235,15 +125,8 @@ export default function TableView({
                 ...sx,
             }}
         >
-            <CustomTableTollbar
-                search={searchValue}
-                setSearch={setSearchValue}
-                categoryFilter={categoryFilter}
-                setCategoryFilter={setCategoryFilter}
-                width={width}
-                numSelected={selected.length}
-                handleSelectedButtonClick={handleSelectedButtonClick}
-            />
+
+
             <TableContainer
                 component={Paper}
                 sx={{
@@ -252,12 +135,6 @@ export default function TableView({
                 }}
                 elevation={0}
             >
-
-                {/* <EnhancedTableToolbar
-                    numSelected={selected.length}
-                    handleSelectedButtonClick={handleSelectedButtonClick}
-                /> */}
-
                 <Table stickyHeader={stickyHeader} size="small" aria-label="sticky table" >
                     <TableHead>
 
@@ -269,7 +146,7 @@ export default function TableView({
                                     checked={data.length > 0 && selected.length === data.length}
                                     onChange={handleSelectAllClick}
                                     inputProps={{
-                                        'aria-label': 'select all desserts',
+                                        'aria-label': 'select all products',
                                     }}
                                 />
                             </TableCell>
@@ -296,7 +173,7 @@ export default function TableView({
                     <TableBody>
                         {(data ?? []).map((item: any, index: number) => {
                             const isItemSelected = isSelected(item.id);
-                            const labelId = `enhanced-table-checkbox-${index}`;
+                            const labelId = `table-checkbox-${index}`;
 
                             return (
                                 <TableRow

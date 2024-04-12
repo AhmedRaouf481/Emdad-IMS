@@ -33,11 +33,7 @@ export default function SelectField(
                 size='small'
                 {...props}
             />
-            <FormHelperText
-                error={props.errors && props.touched ? true : false}
-            >{props.errors && props.touched
-                ? props.errors
-                : ""}</FormHelperText>
+
         </Stack>
 
 

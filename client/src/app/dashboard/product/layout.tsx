@@ -7,6 +7,7 @@ import { Box, Button, Input, createTheme } from "@mui/material"
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { useRef, useState } from "react"
 import api from "@/core/api/api"
+import { TableProvider } from "@/components/TableView/context"
 
 const theme = createTheme({
     palette: {
@@ -71,7 +72,9 @@ export default function ItemLayout({
                 }}
                 />
 
-                {children}
+                <TableProvider>
+                    {children}
+                </TableProvider>
             </ThemeProvider>
         </>
     )

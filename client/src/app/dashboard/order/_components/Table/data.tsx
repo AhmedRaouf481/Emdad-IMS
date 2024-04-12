@@ -1,5 +1,6 @@
 import { HeaderItem } from "@/components/TableView/types";
 
+
 export interface DataItem {
   id: string;
   name: string;
@@ -200,8 +201,8 @@ export const data = [
 
 export const header: HeaderItem[] = [
   {
-    id: "code",
-    label: "Code",
+    id: "serial",
+    label: "",
     minWidth: 150,
     maxWidth: 150,
     tableCellProps: { align: "center" },
@@ -211,8 +212,8 @@ export const header: HeaderItem[] = [
     onClick: () => { },
   },
   {
-    id: "name",
-    label: "Name",
+    id: "purchasingNum",
+    label: "Purchasing Number",
     minWidth: 200,
     maxWidth: 200,
     tableCellProps: { align: "center" },
@@ -222,19 +223,8 @@ export const header: HeaderItem[] = [
     onClick: () => { },
   },
   {
-    id: "description",
-    label: "Description",
-    minWidth: 180,
-    maxWidth: 180,
-    tableCellProps: { align: "center" },
-    sortable: true,
-    filterable: true,
-    searchable: true,
-    onClick: () => { },
-  },
-  {
-    id: "color",
-    label: "Color",
+    id: "clientCode",
+    label: "Client Code",
     minWidth: 100,
     maxWidth: 100,
     tableCellProps: { align: "center" },
@@ -244,8 +234,20 @@ export const header: HeaderItem[] = [
     onClick: () => { },
   },
   {
-    id: "qty",
-    label: "Quantity",
+    id: "clientName",
+    label: "Client Name",
+    minWidth: 180,
+    maxWidth: 180,
+    tableCellProps: { align: "center" },
+    sortable: true,
+    filterable: true,
+    searchable: true,
+    onClick: () => { },
+  },
+
+  {
+    id: "clientAddress",
+    label: "Client Address",
     minWidth: 50,
     maxWidth: 50,
     tableCellProps: { align: "center" },
@@ -255,8 +257,19 @@ export const header: HeaderItem[] = [
     onClick: () => { },
   },
   {
-    id: "price",
-    label: "Price",
+    id: "products",
+    label: "Products",
+    minWidth: 50,
+    maxWidth: 50,
+    tableCellProps: { align: "center" },
+    sortable: true,
+    filterable: true,
+    searchable: true,
+    onClick: () => { },
+  },
+  {
+    id: "createdAt",
+    label: "Created At",
     minWidth: 50,
     maxWidth: 50,
     tableCellProps: { align: "center" },

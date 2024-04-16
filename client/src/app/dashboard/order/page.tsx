@@ -4,9 +4,9 @@ import { Autocomplete, Box, Button, Stack, TextField, Typography } from "@mui/ma
 import TableView from "../../../components/TableView/TableView";
 import { useEffect, useState } from "react";
 import { productsAPI, useGetProductsQuery } from "@/core/redux/slice/api/productsApi";
-import ActionButtons from "@/app/dashboard/product/_components/Table/ButtonGroup";
+import ActionButtons from "@/components/TableView/ActionButtons";
 import CustomizedDialog from "@/components/CustomizedDialog";
-import CreateOrder from "../order/_components/CreateOrder";
+import CreateOrder from "./_components/OrderForm";
 import { signOut } from "next-auth/react";
 import { getAllProducts } from "@/core/redux/thunk/products-thunk";
 import { useAppDispatch } from "@/core/redux/hooks";
@@ -53,6 +53,12 @@ export default function Order() {
     }
     console.log(data);
 
+    const handleEditClick = (e: any) => {
+        // console.log(rowData);
+        // setOpenEdit(true);
+
+    }
+
 
     const tableData: any[] = data?.data.map((v) => ({
         serial: v.serial,
@@ -71,7 +77,10 @@ export default function Order() {
                 setOpen(true);
 
             }}
-        >Products</Button>
+        >Products</Button>,
+        buttons: <ActionButtons
+            handleEditClick={handleEditClick}
+        />
     })) ?? []
     // let data: any;
 

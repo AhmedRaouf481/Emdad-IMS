@@ -279,14 +279,14 @@ export const header: HeaderItem[] = [
     isIcon: true,
     onClick: () => { },
   },
-  // {
-  //   id: "button",
-  //   label: "Actions",
-  //   minWidth: 50,
-  //   maxWidth: 50,
-  //   tableCellProps: { align: "center" },
-  //   isIcon: true,
-  //   onClick: () => { },
-  // },
+  {
+    id: "buttons",
+    label: "",
+    minWidth: 30,
+    maxWidth: 30,
+    tableCellProps: { align: "center" },
+    isIcon: true,
+    onClick: () => { },
+  },
 
 ];

@@ -1,7 +1,7 @@
 "use client"
 
-import { Accordion, Box, Button, FormHelperText, IconButton, LinearProgress, Stack, TextField } from "@mui/material";
-import { Field, FieldArray, FieldProps, Formik, getIn, useFormikContext } from "formik";
+import { Box, Button, FormHelperText, IconButton, LinearProgress, Stack, TextField } from "@mui/material";
+import { FieldArray, Formik, getIn } from "formik";
 import InputField from "@/components/InputField";
 import * as Yup from "yup"
 import { useEffect, useState } from "react";
@@ -42,7 +42,7 @@ const orderSchema = new Yup.ObjectSchema({
 })
 
 
-export default function CreateOrder({ setFieldValue, formRef, data }: { setFieldValue?: any, formRef?: React.MutableRefObject<any>, data?: string[] }) {
+export default function OrderForm({ data }: { data?: string[] }) {
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(false)
     const router = useRouter()
@@ -89,7 +89,6 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
                 console.log(res)
                 setError("")
                 setLoading(false)
-                window.location.reload()
 
             })
             .catch((err) => {
@@ -126,7 +125,6 @@ export default function CreateOrder({ setFieldValue, formRef, data }: { setField
                     }}
                     validationSchema={orderSchema}
                     onSubmit={(values) => handleFormSubmit(values)}
-                    innerRef={formRef}
                 >
                     {({
                         values,

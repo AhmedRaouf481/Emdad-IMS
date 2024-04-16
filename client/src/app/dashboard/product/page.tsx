@@ -5,9 +5,9 @@ import TableView from "../../../components/TableView/TableView";
 import { header } from "./_components/Table/data";
 import { useEffect, useState } from "react";
 import { useGetProductsQuery } from "@/core/redux/slice/api/productsApi";
-import ActionButtons from "@/app/dashboard/product/_components/Table/ButtonGroup";
+import ActionButtons from "@/components/TableView/ActionButtons";
 import CustomizedDialog from "@/components/CustomizedDialog";
-import CreateOrder from "../order/_components/CreateOrder";
+import OrderForm from "../order/_components/OrderForm";
 import { signOut } from "next-auth/react";
 import { getAllProducts } from "@/core/redux/thunk/products-thunk";
 import { useAppDispatch } from "@/core/redux/hooks";
@@ -50,7 +50,7 @@ export default function Product() {
         category: categoryFilter?.label ?? undefined
     }
 
-    const { data, isLoading, isError, error } = useGetProductsQuery(removeEmptyKeys(query));
+    const { data, isLoading, isError, error, refetch } = useGetProductsQuery(removeEmptyKeys(query));
     console.log(isLoading);
     console.log(isError);
     console.log(error);
@@ -60,6 +60,10 @@ export default function Product() {
             signOut()
         }
     }
+
+    useEffect(() => {
+        refetch()
+    }, [openEdit, openOrder])
 
 
     const handleOrderClick = (e: any) => {
@@ -76,7 +80,7 @@ export default function Product() {
     const tableData = data?.data ? data.data.map((value) => {
         return {
             ...value,
-            button: <ActionButtons
+            buttons: <ActionButtons
                 handleEditClick={handleEditClick}
             />
         }
@@ -193,7 +197,7 @@ export default function Product() {
                 </Box>
             </Box>
             <CustomizedDialog open={openOrder} setOpen={setOpenOrder}>
-                <CreateOrder data={selected} />
+                <OrderForm data={selected} />
             </CustomizedDialog>
             <CustomizedDialog open={openEdit} setOpen={setOpenEdit} title="Edit Product">
                 <ProductForm handleSubmit={handleEditSubmit} formIntialValues={rowData} />

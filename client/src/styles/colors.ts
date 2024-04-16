@@ -4,7 +4,7 @@ export default {
     green: "#a8f81d",
     purple: "#6b4ef6",
     orange: "#fecb10",
-    black: "#000",
+    black: "#020401",
 }
 // 56
 // 15

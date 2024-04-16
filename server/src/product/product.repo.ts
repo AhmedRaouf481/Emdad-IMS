@@ -35,6 +35,20 @@ export class ProductRepo extends PrismaGenericRepo<Prisma.ProductCreateInput, Pr
 
                         }
                     },
+                    {
+                        description: {
+                            contains: search,
+                            mode: 'insensitive'
+
+                        }
+                    },
+                    {
+                        color: {
+                            contains: search,
+                            mode: 'insensitive'
+
+                        }
+                    },
 
                 ],
             } : {}

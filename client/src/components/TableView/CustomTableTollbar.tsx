@@ -89,9 +89,9 @@ export default function CustomTableTollbar({
                 <Toolbar
                     sx={{
                         ...(numSelected > 0 && {
-                            bgcolor: (theme) =>
-                                alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+                            bgcolor: colors.secondaryColor,
                         }),
+                        borderRadius: "5px",
                         width: "100%"
                     }}
 

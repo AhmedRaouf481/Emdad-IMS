@@ -16,6 +16,9 @@ import { removeEmptyKeys } from "@/core/utlis/removeEmptyKeys";
 import CustomTableTollbar from "../../../components/TableView/CustomTableTollbar";
 import { useTableContext } from "@/components/TableView/context";
 import api from "@/core/api/api";
+import HeaderButtons from "./_components/HeaderButtons";
+import ProductForm from "./_components/ProductForm";
+import { AxiosError } from "axios";
 
 
 export default function Product() {
@@ -28,7 +31,8 @@ export default function Product() {
     } = useTableContext()
 
     const [rowData, setRowData] = useState<any>()
-    const [open, setOpen] = useState(false);
+    const [openOrder, setOpenOrder] = useState(false);
+    const [openEdit, setOpenEdit] = useState(false);
     const [categoryFilter, setCategoryFilter] = useState<any>()
 
 
@@ -60,14 +64,20 @@ export default function Product() {
 
     const handleOrderClick = (e: any) => {
         console.log(rowData);
-        setOpen(true);
+        setOpenOrder(true);
+
+    }
+
+    const handleEditClick = (e: any) => {
+        console.log(rowData);
+        setOpenEdit(true);
 
     }
     const tableData = data?.data ? data.data.map((value) => {
         return {
             ...value,
             button: <ActionButtons
-                handleOrderClick={handleOrderClick}
+                handleEditClick={handleEditClick}
             />
         }
     }) : []
@@ -90,9 +100,48 @@ export default function Product() {
         }
     }, [categoryFilter])
 
+    const handleEditSubmit = (values: any) => {
+        const {
+            code,
+            name,
+            color,
+            size,
+            material,
+            description,
+            dimension,
+            pkgCapacity,
+            weight,
+            price,
+            qty,
+            minValue,
+        } = values
+
+        api.patch(`product/${values.id}`, {
+            code,
+            name,
+            color,
+            size,
+            material,
+            description,
+            dimension,
+            qty: qty ? +qty : undefined,
+            pkgCapacity: pkgCapacity ? +pkgCapacity : undefined,
+            minValue: minValue ? +minValue : undefined,
+            weight: weight ? +weight : undefined,
+            price: price ? +price : undefined,
+        })
+            .then((res) => {
+                console.log(res)
+            })
+            .catch((err) => {
+                console.log(err)
+
+            })
+    }
 
     return (
         <>
+            <HeaderButtons />
             <Box mt={1} mr={4}>
                 <Box>
                     <Box sx={{
@@ -143,8 +192,11 @@ export default function Product() {
                     />
                 </Box>
             </Box>
-            <CustomizedDialog open={open} setOpen={setOpen}>
+            <CustomizedDialog open={openOrder} setOpen={setOpenOrder}>
                 <CreateOrder data={selected} />
+            </CustomizedDialog>
+            <CustomizedDialog open={openEdit} setOpen={setOpenEdit} title="Edit Product">
+                <ProductForm handleSubmit={handleEditSubmit} formIntialValues={rowData} />
             </CustomizedDialog>
         </>
     );

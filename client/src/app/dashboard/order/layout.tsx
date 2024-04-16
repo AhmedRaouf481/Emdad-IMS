@@ -9,16 +9,6 @@ import { useRef, useState } from "react"
 import api from "@/core/api/api"
 import { TableProvider } from "@/components/TableView/context"
 
-const theme = createTheme({
-    palette: {
-        primary: {
-            main: colors.orange
-        },
-        secondary: {
-            main: colors.purple
-        },
-    }
-})
 export default function OrderLayout({
     children,
 }: {
@@ -28,15 +18,13 @@ export default function OrderLayout({
 
     return (
         <>
-            <ThemeProvider theme={theme}>
 
-                <Header title="Orders"
-                />
+            <Header title="Orders"
+            />
 
-                <TableProvider>
-                    {children}
-                </TableProvider>
-            </ThemeProvider>
+            <TableProvider>
+                {children}
+            </TableProvider>
         </>
     )
 }

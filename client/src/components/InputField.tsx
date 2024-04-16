@@ -10,7 +10,7 @@ export default function InputField(props: inputFieldProps) {
         <Stack
             direction="column"
             spacing={1}
-            sx={{ width: "inherit" }}>
+            sx={{ width: "100%" }}>
             <Typography sx={{
 
                 fontSize: {

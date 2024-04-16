@@ -112,6 +112,7 @@ export default function Login() {
                                     variant="contained"
                                     disableElevation
                                     type="submit"
+                                    disabled={loading}
                                 >
                                     Submit
                                 </Button>

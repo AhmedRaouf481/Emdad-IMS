@@ -65,7 +65,7 @@ const Sidebar = () => {
                                         className="sidebar__link"
                                         href={href}
                                     >
-                                        <span className={`sidebar__icon ${pathname === href ? "sidebar__icon--active" : ""
+                                        <span className={`sidebar__icon ${pathname.split("/").slice(2).includes(href.split("/").slice(2)[0]) || pathname === href ? "sidebar__icon--active" : ""
                                             }`}>
                                             <Icon size="1.4rem" style={{ display: "flex", alignItems: "center", justifyContent: "center" }} />
                                         </span>

@@ -3,21 +3,15 @@ import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
 import { DeleteRounded, EditRounded } from '@mui/icons-material';
 
 interface ActionButtonsProps {
-    handleOrderClick: any
+    handleEditClick: any
 }
 
 export default function ActionButtons(
-    { handleOrderClick }: ActionButtonsProps
+    { handleEditClick }: ActionButtonsProps
 ) {
     return (
         <Box >
-            {/* 
-            <IconButton color='info' aria-label='Order' title='Order'
-                onClick={handleOrderClick}>
-                <AssignmentRoundedIcon />
-            </IconButton> */}
-
-            <IconButton color='success' aria-label='Edit' title='Edit'>
+            <IconButton color='success' aria-label='Edit' title='Edit' onClick={handleEditClick}>
                 <EditRounded />
             </IconButton>
             <IconButton color='error' aria-label='Delete' title='Delete'>

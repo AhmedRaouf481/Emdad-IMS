@@ -5,7 +5,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, Breakpoint, Slide } from '@mui/material';
+import { Box, Breakpoint, DialogTitle, Slide } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -31,6 +31,7 @@ export default function CustomizedDialog(props: {
     open: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     maxWidth?: false | Breakpoint
+    title?: string
 }) {
     const handleClose = () => {
         props.setOpen(false);
@@ -46,6 +47,11 @@ export default function CustomizedDialog(props: {
                 fullWidth
                 maxWidth={props.maxWidth ?? 'sm'}
             >
+                {props.title ?
+                    <DialogTitle sx={{ m: 0, p: 2 }} id="dialog-title">
+                        {props.title}
+                    </DialogTitle>
+                    : null}
                 <IconButton
                     aria-label="close"
                     onClick={handleClose}

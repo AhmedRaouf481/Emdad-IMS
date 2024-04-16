@@ -22,15 +22,15 @@ export class CreateProductDto implements Prisma.ProductCreateInput {
     @IsNumber()
     pkgCapacity: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
     color: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
     dimension: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
     material: string;
 

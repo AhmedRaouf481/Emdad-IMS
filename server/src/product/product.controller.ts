@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Query, BadRequestException } from '@nestjs/common';
 import { handleError } from '@/shared/http-error';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Public } from '@/shared/decorators/public.decorator';
+import { memoryStorage } from 'multer';
 
 @Controller('product')
 export class ProductController {
@@ -20,7 +21,15 @@ export class ProductController {
   }
 
   @Post('import-data')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', {
+    storage: memoryStorage(),
+    fileFilter: (req, file, callback) => {
+      if (!file.mimetype.includes('excel') && !file.mimetype.includes('spreadsheetml')) {
+        return callback(new BadRequestException('Only Excel files are allowed!'), false);
+      }
+      callback(null, true);
+    }
+  }))
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     try {
       return await this.productService.processImportedFile(file);

@@ -145,7 +145,7 @@ export default function Product() {
 
     return (
         <>
-            <HeaderButtons />
+            <HeaderButtons refetch={refetch} />
             <Box mt={1} mr={4}>
                 <Box>
                     <Box sx={{

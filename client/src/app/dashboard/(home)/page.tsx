@@ -7,18 +7,18 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Grid,
   Stack,
   Typography,
 } from "@mui/material";
 import CardView from "../product/_components/CardView";
-import { BiDollar } from "react-icons/bi";
+import Grid from '@mui/material/Unstable_Grid2';
 import Header from "@/components/layout/Header";
 import * as React from "react";
 import Paper from "@mui/material/Paper";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { TableProvider } from "@/components/TableView/context";
 import TableView from "@/components/TableView/TableView";
+import DashboardPaper from "./_components/DashboardPaper";
 
 export function BasicPie() {
   return (
@@ -26,14 +26,23 @@ export function BasicPie() {
       series={[
         {
           data: [
-            { id: 0, value: 10, label: "series A" },
-            { id: 1, value: 15, label: "series B" },
-            { id: 2, value: 20, label: "series C" },
+            { id: 0, value: 10,color: "#cdf9fe" },
+            { id: 1, value: 15,color:"#fecdfe" },
+            { id: 2, value: 20, color:"#cde5fe"},
+            { id: 3, value: 20,color:"#f9d406" },
           ],
+          innerRadius: 30,
+          outerRadius: 100,
+          paddingAngle: 0,
+          cornerRadius: 5,
+          startAngle: -180,
+          endAngle: 180,
+          cx: 150,
+          cy: 150,
         },
       ]}
-      width={400}
-      height={200}
+      width={300}
+      height={270}
     />
   );
 }
@@ -48,7 +57,7 @@ export const header = [
     sortable: true,
     filterable: true,
     searchable: true,
-    onClick: () => {},
+    onClick: () => { },
   },
   {
     id: "name",
@@ -59,7 +68,7 @@ export const header = [
     sortable: true,
     filterable: true,
     searchable: true,
-    onClick: () => {},
+    onClick: () => { },
   },
   {
     id: "color",
@@ -70,7 +79,7 @@ export const header = [
     sortable: true,
     filterable: true,
     searchable: true,
-    onClick: () => {},
+    onClick: () => { },
   },
   {
     id: "qty",
@@ -81,7 +90,7 @@ export const header = [
     sortable: true,
     filterable: true,
     searchable: true,
-    onClick: () => {},
+    onClick: () => { },
   },
   {
     id: "buttons",
@@ -90,9 +99,10 @@ export const header = [
     maxWidth: 30,
     tableCellProps: { align: "center" },
     isIcon: true,
-    onClick: () => {},
+    onClick: () => { },
   },
 ];
+
 export function DisplayTable({ data }: any) {
   return (
     <TableProvider>
@@ -147,15 +157,32 @@ export default function Home() {
   ];
   return (
     <>
-      <Header title="Dashboard" />
-      <Stack mt={1} spacing={2} direction={"row"} flexWrap={"wrap"}>
-        <Paper variant="outlined">
-          <DisplayTable data={data} />
-        </Paper>
-        <Paper variant="outlined">
-          <BasicPie />
-        </Paper>
-      </Stack>
+      {/* <Header title="Dashboard" /> */}
+      <Box sx={{ width: '100%', mt: 4 , pr: 2 }}>
+        <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 2 }}>
+          <Grid xs={8}>
+            <DashboardPaper title="Recent Orders" subTitle="Last month">
+              <DisplayTable data={data} />
+            </DashboardPaper>
+          </Grid>
+          <Grid xs={4}>
+            <DashboardPaper title="Top 5 Products">
+              <BasicPie />
+            </DashboardPaper>
+          </Grid>
+          <Grid xs={8}>
+            <DashboardPaper title="Stocks" subTitle="14 days or less">
+              <DisplayTable data={data} />
+            </DashboardPaper>
+          </Grid>
+          <Grid xs={4}>
+            <DashboardPaper title="Expired soon" subTitle="14 days or less">
+              <DisplayTable data={data} />
+            </DashboardPaper>
+          </Grid>
+        </Grid>
+      </Box>
+
     </>
-  );
+  )
 }

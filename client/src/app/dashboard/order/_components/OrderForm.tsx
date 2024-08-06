@@ -16,6 +16,7 @@ import { Clear } from "@mui/icons-material";
 import { ProductState } from "@/core/redux/slice/products-slice";
 import { useAppSelector } from "@/core/redux/hooks";
 import { ClientState } from "@/core/redux/slice/clients-slice";
+import AlertService from "@/core/utlis/alert-service";
 
 
 interface ProductValues {
@@ -42,7 +43,7 @@ const orderSchema = new Yup.ObjectSchema({
 })
 
 
-export default function OrderForm({ data }: { data?: string[] }) {
+export default function OrderForm({ data,setOpenOrder }: { data?: string[],setOpenOrder?:  React.Dispatch<React.SetStateAction<boolean>>}) {
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(false)
     const router = useRouter()
@@ -89,6 +90,10 @@ export default function OrderForm({ data }: { data?: string[] }) {
                 console.log(res)
                 setError("")
                 setLoading(false)
+                if(setOpenOrder){
+                    setOpenOrder(false)
+                }
+                AlertService.showAlert("Order has been created","success")
 
             })
             .catch((err) => {

@@ -136,6 +136,7 @@ export default function Product() {
         })
             .then((res) => {
                 console.log(res)
+                setOpenEdit(false);
             })
             .catch((err) => {
                 console.log(err)
@@ -197,7 +198,7 @@ export default function Product() {
                 </Box>
             </Box>
             <CustomizedDialog open={openOrder} setOpen={setOpenOrder}>
-                <OrderForm data={selected} />
+                <OrderForm data={selected} setOpenOrder={setOpenOrder}/>
             </CustomizedDialog>
             <CustomizedDialog open={openEdit} setOpen={setOpenEdit} title="Edit Product">
                 <ProductForm handleSubmit={handleEditSubmit} formIntialValues={rowData} />

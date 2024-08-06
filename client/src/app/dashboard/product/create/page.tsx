@@ -22,6 +22,7 @@ export default function CreateProduct() {
         })
             .then((res) => {
                 console.log(res);
+                router.push("/dashboard/product")
             })
             .catch((err) => {
                 console.log(err);

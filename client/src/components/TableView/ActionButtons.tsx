@@ -4,10 +4,11 @@ import { useState } from 'react';
 
 interface ActionButtonsProps {
     handleEditClick: any
+    handleDeleteClick: any
 }
 
 export default function ActionButtons(
-    { handleEditClick }: ActionButtonsProps
+    { handleEditClick,handleDeleteClick }: ActionButtonsProps
 ) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -39,7 +40,7 @@ export default function ActionButtons(
                 }}
             >
                 <MenuItem onClick={() => { handleClose(); return handleEditClick() }}>Edit</MenuItem>
-                <MenuItem onClick={handleClose} color='red'>Delete</MenuItem>
+                <MenuItem onClick={() => {handleClose(); return handleDeleteClick()}} color='red'>Delete</MenuItem>
             </Menu>
         </Box>
     );

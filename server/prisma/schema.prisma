@@ -23,8 +23,8 @@ model User {
 }
 
 model Product {
-  id          String  @id @default(cuid())
-  code        String  @unique
+  id          String    @id @default(cuid())
+  code        String    @unique
   name        String
   price       Int
   qty         Int
@@ -37,6 +37,8 @@ model Product {
   size        String?
   material    String?
   minValue    Int?
+  isDeleted   Boolean   @default(false) // New field
+  deletedAt   DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

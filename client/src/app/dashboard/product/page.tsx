@@ -1,25 +1,27 @@
-"use client"
+"use client";
 
 import { Autocomplete, Box, TextField } from "@mui/material";
+import { SetStateAction, useEffect, useState } from "react";
+import { signOut } from "next-auth/react";
+import { AxiosError } from "axios";
+
 import TableView from "../../../components/TableView/TableView";
 import { header } from "./_components/Table/data";
-import { useEffect, useState } from "react";
-import { useGetProductsQuery } from "@/core/redux/slice/api/productsApi";
 import ActionButtons from "@/components/TableView/ActionButtons";
 import CustomizedDialog from "@/components/CustomizedDialog";
 import OrderForm from "../order/_components/OrderForm";
-import { signOut } from "next-auth/react";
+import HeaderButtons from "./_components/HeaderButtons";
+import ProductForm from "./_components/ProductForm";
+import ConfirmationDialog from "@/components/ConfirmationDialog";
+import CustomTableTollbar from "../../../components/TableView/CustomTableTollbar";
+
+import { useGetProductsQuery } from "@/core/redux/slice/api/productsApi";
 import { getAllProducts } from "@/core/redux/thunk/products-thunk";
 import { useAppDispatch } from "@/core/redux/hooks";
 import { getAllClients } from "@/core/redux/thunk/clients-thunk";
 import { removeEmptyKeys } from "@/core/utlis/removeEmptyKeys";
-import CustomTableTollbar from "../../../components/TableView/CustomTableTollbar";
 import { useTableContext } from "@/components/TableView/context";
 import api from "@/core/api/api";
-import HeaderButtons from "./_components/HeaderButtons";
-import ProductForm from "./_components/ProductForm";
-import { AxiosError } from "axios";
-
 
 export default function Product() {
     const {
@@ -28,81 +30,85 @@ export default function Product() {
         rowsPerPage,
         search,
         selected,
-    } = useTableContext()
+    } = useTableContext();
 
-    const [rowData, setRowData] = useState<any>()
+    const [rowData, setRowData] = useState<any>();
     const [openOrder, setOpenOrder] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
-    const [categoryFilter, setCategoryFilter] = useState<any>()
+    const [confirmationOpen, setConfirmationOpen] = useState(false);
+    const [categoryFilter, setCategoryFilter] = useState<any>();
 
-
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
-        dispatch(getAllProducts())
-        dispatch(getAllClients())
-    }, [dispatch])
+        dispatch(getAllProducts());
+        dispatch(getAllClients());
+    }, [dispatch]);
 
     const query = {
         page: page + 1,
         limit: rowsPerPage,
         search: search,
-        category: categoryFilter?.label ?? undefined
-    }
+        category: categoryFilter?.label ?? undefined,
+    };
 
     const { data, isLoading, isError, error, refetch } = useGetProductsQuery(removeEmptyKeys(query));
-    console.log(isLoading);
-    console.log(isError);
-    console.log(error);
-    if (isError) {
-        // TODO: modify type for error
-        if ((error as any)?.status === 401) {
-            signOut()
-        }
-    }
 
     useEffect(() => {
-        refetch()
-    }, [openEdit, openOrder])
+        refetch();
+    }, [openEdit, openOrder]);
 
+    if (isError) {
+        if ((error as AxiosError)?.response?.status === 401) {
+            signOut();
+        }
+    }
 
     const handleOrderClick = (e: any) => {
         console.log(rowData);
         setOpenOrder(true);
-
-    }
+    };
 
     const handleEditClick = (e: any) => {
         console.log(rowData);
         setOpenEdit(true);
+    };
 
-    }
-    const tableData = data?.data ? data.data.map((value) => {
-        return {
-            ...value,
-            buttons: <ActionButtons
-                handleEditClick={handleEditClick}
-            />
-        }
-    }) : []
+    const handleDeleteClick = (e: any) => {
+        setConfirmationOpen(true);
+    };
+
+    const tableData = data?.data
+        ? data.data.map((value) => {
+            return {
+                ...value,
+                buttons: (
+                    <ActionButtons
+                        handleEditClick={handleEditClick}
+                        handleDeleteClick={handleDeleteClick}
+                    />
+                ),
+            };
+        })
+        : [];
 
     console.log(selected);
 
-    const [categories, setCategories] = useState([])
+    const [categories, setCategories] = useState([]);
 
     useEffect(() => {
-        api.get('/product/category')
+        api.get("/product/category")
             .then((res) => setCategories(res.data))
-            .catch((err) => { console.log(err) })
-
-    }, [])
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
 
     useEffect(() => {
         if (categoryFilter) {
-            setPage(0)
-
+            setPage(0);
         }
-    }, [categoryFilter])
+    }, [categoryFilter]);
 
     const handleEditSubmit = (values: any) => {
         const {
@@ -118,7 +124,7 @@ export default function Product() {
             price,
             qty,
             minValue,
-        } = values
+        } = values;
 
         api.patch(`product/${values.id}`, {
             code,
@@ -135,55 +141,74 @@ export default function Product() {
             price: price ? +price : undefined,
         })
             .then((res) => {
-                console.log(res)
+                console.log(res);
                 setOpenEdit(false);
             })
             .catch((err) => {
-                console.log(err)
+                console.log(err);
+            });
+    };
 
+    const handleDeleteConfirm = () => {
+        api.delete(`product/${rowData.id}`)
+            .then(() => {
+                setConfirmationOpen(false);
+                refetch();
             })
-    }
+            .catch((err) => {
+                console.log(err);
+                setConfirmationOpen(false);
+                refetch();
+            });
+    };
 
     return (
         <>
             <HeaderButtons refetch={refetch} />
             <Box mt={1} mr={4}>
                 <Box>
-                    <Box sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 2,
-                        width: '100%',
-                    }}>
-
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 2,
+                            width: "100%",
+                        }}
+                    >
                         <CustomTableTollbar
                             numSelected={selected.length}
                             handleSelectedButtonClick={handleOrderClick}
                         />
 
                         <Autocomplete
-                            size='small'
-
+                            size="small"
                             sx={{
                                 width: {
-                                    lg: "30%", md: "40%", xs: "100%"
+                                    lg: "30%",
+                                    md: "40%",
+                                    xs: "100%",
                                 },
-
                             }}
                             renderInput={(params) => (
-                                <TextField {...params} name="products" placeholder="Product" variant='standard' />
+                                <TextField
+                                    {...params}
+                                    name="products"
+                                    placeholder="Product"
+                                    variant="standard"
+                                />
                             )}
                             options={
-                                categories.map((value: { name: string, id: string }) => ({
+                                categories.map((value: { name: string; id: string }) => ({
                                     label: value.name.toLowerCase(),
-                                    id: value.id
+                                    id: value.id,
                                 })) ?? []
                             }
                             value={categoryFilter}
                             onChange={(e, value) => {
                                 setCategoryFilter(value);
-                            }} />
+                            }}
+                        />
                     </Box>
 
                     <TableView
@@ -198,11 +223,25 @@ export default function Product() {
                 </Box>
             </Box>
             <CustomizedDialog open={openOrder} setOpen={setOpenOrder}>
-                <OrderForm data={selected} setOpenOrder={setOpenOrder}/>
+                <OrderForm data={selected} setOpenOrder={setOpenOrder} />
             </CustomizedDialog>
-            <CustomizedDialog open={openEdit} setOpen={setOpenEdit} title="Edit Product">
-                <ProductForm handleSubmit={handleEditSubmit} formIntialValues={rowData} />
+            <CustomizedDialog
+                open={openEdit}
+                setOpen={setOpenEdit}
+                title="Edit Product"
+            >
+                <ProductForm
+                    handleSubmit={handleEditSubmit}
+                    formIntialValues={rowData}
+                />
             </CustomizedDialog>
+            <ConfirmationDialog
+                open={confirmationOpen}
+                setOpen={setConfirmationOpen}
+                title="Delete Product!"
+                contentMessage="Are you sure you want to delete this product?"
+                confirmFunction={handleDeleteConfirm}
+            />
         </>
     );
 }

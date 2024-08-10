@@ -151,7 +151,9 @@ export class ProductService {
 
     async findAll() {
         try {
-            const product = await this.productRepo.getAll()
+            const product = await this.productRepo.getAll({
+                where: {isDeleted: false},
+              })
             return product
         } catch (error) {
             throw error
@@ -196,7 +198,12 @@ export class ProductService {
 
     async remove(id: string) {
         try {
-            const product = await this.productRepo.delete(id)
+            console.log("12");
+            
+            const product = await this.productRepo.update(id,{
+                isDeleted:true,
+                deletedAt: new Date()
+            })
             return product
         } catch (error) {
             throw error
